@@ -1,0 +1,3053 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sintassi Craft - L'Avventura dell'Analisi del Periodo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts per Alta Leggibilità Morbida (Nunito, Lexend, Atkinson) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Tone.js per effetti sonori 8-bit -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        pixel: ['Nunito', 'Lexend', 'sans-serif'],
+                        dyslexic: ['Nunito', 'Lexend', 'sans-serif'],
+                        accessible: ['"Atkinson Hyperlegible"', 'Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        mc: {
+                            dirt: '#5c3d26',
+                            grass: '#4a7c29',
+                            stone: '#606060',
+                            wood: '#855c38',
+                            woodDark: '#4a331f',
+                            diamond: '#29c2ca',
+                            diamondDark: '#128b92',
+                            gold: '#f3c734',
+                            goldDark: '#b28b12',
+                            emerald: '#37ca58',
+                            emeraldDark: '#1d8736',
+                            redstone: '#e62d20',
+                            lapis: '#2858dc',
+                            sand: '#d9cb9e',
+                            obsidian: '#1a1829',
+                            panel: '#c6c6c6',
+                            netherite: '#3c353d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Rendering tipografico morbido e ad alta leggibilità */
+        html, body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Titoli e badge: arrotondati, morbidi e ben leggibili di default */
+        .font-pixel {
+            font-family: 'Nunito', 'Lexend', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0.025em;
+            line-height: 1.4;
+        }
+
+        /* Bordi morbidi ispirati ai blocchi Minecraft senza spigoli aggressivi */
+        .pixel-box {
+            background-color: #f4f2ec;
+            border: 3px solid #35302c;
+            border-radius: 14px;
+            box-shadow: inset -3px -3px 0px 0px rgba(0,0,0,0.08), inset 3px 3px 0px 0px rgba(255,255,255,0.85), 0 4px 12px rgba(0,0,0,0.16);
+        }
+
+        .pixel-box-dark {
+            background-color: #2c2a33;
+            border: 3px solid #18161d;
+            border-radius: 14px;
+            color: #f8fafc;
+            box-shadow: inset -3px -3px 0px 0px rgba(0,0,0,0.35), inset 3px 3px 0px 0px rgba(255,255,255,0.08), 0 4px 14px rgba(0,0,0,0.28);
+        }
+
+        .pixel-box-wood {
+            background-color: #845d3b;
+            border: 3px solid #3b2716;
+            border-radius: 14px;
+            box-shadow: inset -3px -3px 0px 0px rgba(45,28,14,0.45), inset 3px 3px 0px 0px rgba(255,225,190,0.28), 0 6px 16px rgba(0,0,0,0.25);
+        }
+
+        .pixel-btn {
+            position: relative;
+            border: 2.5px solid #2b2623;
+            border-radius: 10px;
+            box-shadow: inset -2px -2px 0px 0px rgba(0,0,0,0.22), inset 2px 2px 0px 0px rgba(255,255,255,0.38), 0 2px 5px rgba(0,0,0,0.15);
+            transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.12s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .pixel-btn:hover {
+            filter: brightness(1.04);
+        }
+
+        .pixel-btn:active {
+            transform: translateY(1.5px);
+            box-shadow: inset 2px 2px 0px 0px rgba(0,0,0,0.25);
+        }
+
+        .pixel-btn:focus-visible {
+            outline: 3px solid #f3c734;
+            outline-offset: 2px;
+        }
+
+        /* Variabili per Controllo Dinamico della Leggibilità */
+        :root {
+            --base-font-size: 18px;
+            --base-line-height: 1.75;
+            --base-letter-spacing: 0.015em;
+            --word-spacing: 0.05em;
+        }
+
+        body {
+            font-size: var(--base-font-size);
+            line-height: var(--base-line-height);
+            letter-spacing: var(--base-letter-spacing);
+            word-spacing: var(--word-spacing);
+            background-color: #1f1d30;
+            background-image: radial-gradient(#322e4d 1.5px, transparent 1.5px);
+            background-size: 26px 26px;
+            color: #24211f;
+        }
+
+        /* Riquadro del periodo: carta avorio morbida riposante per gli occhi */
+        #sentence-display-area {
+            background-color: #fdfcf8;
+            color: #1f242b;
+            font-size: 1.2rem;
+            line-height: 1.85;
+            font-weight: 600;
+            border-color: #4b4540;
+            border-radius: 12px;
+        }
+
+        .font-dyslexic-mode { font-family: 'Nunito', 'Lexend', sans-serif !important; }
+        .font-accessible-mode { font-family: 'Atkinson Hyperlegible', 'Nunito', sans-serif !important; }
+        .font-pixel-mode,
+        .font-pixel-mode .font-pixel { font-family: 'Press Start 2P', monospace !important; }
+
+        /* =========================================================================
+           TEMI E ALTO CONTRASTO MORBIDO (WCAG AAA SENZA AFFATICAMENTO)
+           ========================================================================= */
+        .theme-high-contrast {
+            background-color: #0b0c10 !important;
+            background-image: none !important;
+            color: #f8fafc !important;
+        }
+
+        /* Testo generale ad alto contrasto */
+        .theme-high-contrast p,
+        .theme-high-contrast span,
+        .theme-high-contrast h1,
+        .theme-high-contrast h2,
+        .theme-high-contrast h3,
+        .theme-high-contrast h4,
+        .theme-high-contrast div,
+        .theme-high-contrast label,
+        .theme-high-contrast em,
+        .theme-high-contrast strong {
+            color: #f8fafc !important;
+        }
+
+        /* Evidenziazioni dorate/gialle morbide */
+        .theme-high-contrast h1,
+        .theme-high-contrast h2,
+        .theme-high-contrast h3,
+        .theme-high-contrast strong,
+        .theme-high-contrast [class*="text-yellow-"],
+        .theme-high-contrast [class*="text-amber-"],
+        .theme-high-contrast [class*="text-stone-300"],
+        .theme-high-contrast [class*="text-stone-400"],
+        .theme-high-contrast [class*="text-stone-500"] {
+            color: #fde047 !important;
+        }
+
+        /* Box e pannelli */
+        .theme-high-contrast .pixel-box, 
+        .theme-high-contrast .pixel-box-dark,
+        .theme-high-contrast .pixel-box-wood {
+            background-color: #12141c !important;
+            border-color: #fde047 !important;
+            box-shadow: 0 0 0 1px rgba(253, 224, 71, 0.45) !important;
+            color: #f8fafc !important;
+        }
+
+        /* Area visualizzazione del periodo: nero morbido, bordo giallo vivido, testo bianco avorio */
+        .theme-high-contrast #sentence-display-area {
+            background-color: #0b0c10 !important;
+            border: 3px solid #fde047 !important;
+            color: #f8fafc !important;
+            box-shadow: none !important;
+        }
+
+        /* Miniera: contenitore parole e bottoni parola */
+        .theme-high-contrast #word-chips-container {
+            background-color: #141414 !important;
+            border-color: #ffff00 !important;
+        }
+        .theme-high-contrast #word-chips-container button {
+            background-color: #000000 !important;
+            border: 2px solid #ffffff !important;
+            color: #ffffff !important;
+        }
+        .theme-high-contrast #word-chips-container button:hover {
+            background-color: #222222 !important;
+            border-color: #ffff00 !important;
+        }
+        .theme-high-contrast #word-chips-container button span {
+            color: #ffffff !important;
+        }
+        .theme-high-contrast #word-chips-container button.border-mc-redstone {
+            border-color: #ff3333 !important;
+            background-color: #3b0000 !important;
+        }
+        .theme-high-contrast #word-chips-container button.border-mc-redstone span {
+            color: #ffffff !important;
+        }
+
+        /* Crafting: riquadri proposizioni e bottoni opzione */
+        .theme-high-contrast #interaction-zone .pixel-box {
+            background-color: #121212 !important;
+            border: 2px solid #ffff00 !important;
+        }
+        .theme-high-contrast [class*="craft-option-"] {
+            background-color: #000000 !important;
+            border: 2px solid #ffffff !important;
+            color: #ffffff !important;
+        }
+        .theme-high-contrast [class*="craft-option-"] div {
+            color: #ffffff !important;
+        }
+        .theme-high-contrast [class*="craft-option-"]:hover {
+            border-color: #ffff00 !important;
+            background-color: #1f1f1f !important;
+        }
+        .theme-high-contrast [class*="craft-option-"].ring-4 {
+            outline: 3px solid #ffff00 !important;
+        }
+        .theme-high-contrast [class*="craft-option-"].bg-mc-diamond {
+            background-color: #00363a !important;
+            border-color: #00ffff !important;
+        }
+        .theme-high-contrast [class*="craft-option-"].bg-mc-gold {
+            background-color: #4a3800 !important;
+            border-color: #ffff00 !important;
+        }
+        .theme-high-contrast [class*="craft-option-"].bg-mc-emerald {
+            background-color: #004015 !important;
+            border-color: #00ff66 !important;
+        }
+
+        /* Select e campi input / textarea */
+        .theme-high-contrast select,
+        .theme-high-contrast textarea,
+        .theme-high-contrast input {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            border: 2px solid #ffff00 !important;
+        }
+        .theme-high-contrast select option {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+        }
+
+        /* Villager Hint Box */
+        .theme-high-contrast #villager-hint-box {
+            background-color: #121212 !important;
+            border-left: 8px solid #ffff00 !important;
+            border-color: #ffff00 !important;
+        }
+        .theme-high-contrast #villager-hint-text {
+            color: #ffff00 !important;
+        }
+
+        /* Feedback Box */
+        .theme-high-contrast #feedback-box {
+            background-color: #000000 !important;
+            border: 3px solid #ffff00 !important;
+            color: #ffffff !important;
+        }
+        .theme-high-contrast #feedback-box * {
+            color: #ffffff !important;
+        }
+
+        /* Albero Sintattico & Cantiere Guidato */
+        .theme-high-contrast #syntax-tree-container,
+        .theme-high-contrast .tree-blueprint-box {
+            background-color: #0a0a0a !important;
+            border: 3px solid #ffff00 !important;
+        }
+        .theme-high-contrast #syntax-tree-canvas .pixel-box,
+        .theme-high-contrast .tree-node-placed {
+            background-color: #000000 !important;
+            border: 2px solid #ffff00 !important;
+            color: #ffffff !important;
+        }
+        .theme-high-contrast .tree-slot-empty {
+            background-color: #161616 !important;
+            border: 2px dashed #ffff00 !important;
+            color: #ffff00 !important;
+        }
+        .theme-high-contrast .tree-bank-btn {
+            background-color: #000000 !important;
+            border: 2px solid #ffffff !important;
+            color: #ffffff !important;
+        }
+        .theme-high-contrast .tree-bank-btn:hover {
+            background-color: #222222 !important;
+            border-color: #ffff00 !important;
+        }
+        .theme-high-contrast .tree-step-pill {
+            background-color: #141414 !important;
+            border: 2px solid #888888 !important;
+            color: #ffffff !important;
+        }
+        .theme-high-contrast .tree-step-pill-active {
+            background-color: #3a3000 !important;
+            border: 2px solid #ffff00 !important;
+            color: #ffff00 !important;
+        }
+        .theme-high-contrast #syntax-tree-canvas div,
+        .theme-high-contrast #syntax-tree-canvas span {
+            color: #ffffff !important;
+        }
+
+        /* Pulsanti d'azione */
+        .theme-high-contrast .pixel-btn {
+            border: 2px solid #ffff00 !important;
+            box-shadow: none !important;
+        }
+        .theme-high-contrast .pixel-btn:hover {
+            outline: 2px solid #ffffff !important;
+        }
+
+        /* Modali */
+        .theme-high-contrast #accessibility-modal .pixel-box,
+        .theme-high-contrast #guide-modal .pixel-box,
+        .theme-high-contrast #inventory-modal .pixel-box-dark {
+            background-color: #000000 !important;
+            border: 4px solid #ffff00 !important;
+            color: #ffffff !important;
+        }
+        .theme-high-contrast #guide-modal div {
+            background-color: #111111 !important;
+            border: 2px solid #ffff00 !important;
+            color: #ffffff !important;
+        }
+
+        /* Animazioni di Feedback */
+        @keyframes bounceGlow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .floating { animation: bounceGlow 3s ease-in-out infinite; }
+
+        @keyframes pulseBorder {
+            0%, 100% { box-shadow: 0 0 10px rgba(41, 194, 202, 0.6); }
+            50% { box-shadow: 0 0 25px rgba(41, 194, 202, 1); }
+        }
+        .glow-active { animation: pulseBorder 1.5s infinite; }
+
+        /* Schemi Albero Sintattico */
+        .syntax-branch {
+            position: relative;
+        }
+        .syntax-branch::before {
+            content: '';
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            width: 3px;
+            height: 16px;
+            background-color: #606060;
+        }
+    </style>
+</head>
+<body class="font-dyslexic-mode text-stone-900 min-h-screen flex flex-col selection:bg-mc-diamond selection:text-black">
+
+    <!-- BARRA DI NAVIGAZIONE SUPERIORE -->
+    <header class="bg-mc-woodDark text-white border-b-4 border-black p-3 sm:p-4 sticky top-0 z-40 shadow-xl">
+        <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-3">
+            
+            <!-- Logo e Titolo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="returnToMenu()">
+                <div class="w-11 h-11 bg-mc-grass border-3 border-black flex items-center justify-center text-2xl shadow-inner font-pixel text-yellow-300">
+                    ⛏️
+                </div>
+                <div>
+                    <h1 class="font-pixel text-xs sm:text-sm text-yellow-300 tracking-wider">SINTASSI CRAFT 2.0</h1>
+                    <p class="text-[11px] text-stone-300">L'Avventura dell'Analisi del Periodo</p>
+                </div>
+            </div>
+
+            <!-- Gamification: Livello, XP & Streak Combos -->
+            <div class="flex items-center gap-3 bg-black/60 px-3 py-1.5 rounded-lg border-2 border-stone-700">
+                <div class="flex items-center gap-2">
+                    <span id="streak-fire" class="text-xl hidden" title="Serie di risposte corrette!">🔥</span>
+                    <span class="text-xl">⭐</span>
+                    <div>
+                        <div class="flex justify-between items-center text-[11px] text-stone-300 font-pixel">
+                            <span>LIV <strong id="level-num" class="text-yellow-400">1</strong></span>
+                            <span id="streak-counter" class="text-orange-400 text-[10px] ml-2 font-bold"></span>
+                        </div>
+                        <div class="w-24 sm:w-36 bg-gray-900 h-3 rounded-full overflow-hidden border border-stone-600">
+                            <div id="xp-bar" class="bg-mc-emerald h-full w-0 transition-all duration-500"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xs font-bold bg-mc-diamond text-black px-2 py-1 rounded border border-black font-pixel shadow" id="xp-text">
+                    0 XP
+                </div>
+            </div>
+
+            <!-- Pulsanti Rapidi: Inventario, Voce, Suono, Accessibilità -->
+            <div class="flex items-center space-x-2">
+                <button onclick="openInventoryModal()" title="Zaino dei Minerali & Strumenti" class="pixel-btn bg-mc-wood text-yellow-300 p-2 rounded text-sm font-bold flex items-center gap-1">
+                    <span id="equipped-tool-icon">🪵</span>
+                    <span class="hidden md:inline text-xs font-pixel">ZAINO</span>
+                </button>
+                <button id="btn-tts-toggle" onclick="toggleSpeechAssist()" title="Assistente Vocale" class="pixel-btn bg-mc-gold text-black p-2 rounded text-sm font-bold flex items-center gap-1">
+                    <span id="tts-icon">🔊</span>
+                    <span class="hidden sm:inline text-xs font-pixel">VOCE</span>
+                </button>
+                <button onclick="toggleAudioMute()" id="btn-sound-toggle" title="Suoni Retro" class="pixel-btn bg-stone-700 text-white p-2 rounded text-sm font-bold">
+                    <span id="sound-icon">🎵</span>
+                </button>
+                <button onclick="openAccessibilityModal()" title="Opzioni di Leggibilità" class="pixel-btn bg-mc-diamond text-black p-2 rounded text-sm font-bold flex items-center gap-1">
+                    <span>⚙️</span>
+                    <span class="hidden sm:inline text-xs font-pixel">OPZIONI</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- AREA PRINCIPALE DI CONTENUTO -->
+    <main class="flex-grow max-w-5xl w-full mx-auto p-3 sm:p-6 space-y-6">
+
+        <!-- ==========================================
+             1. SCHERMATA INIZIALE / SELEZIONE BIOMA
+             ========================================== -->
+        <section id="biome-select-screen" class="space-y-6">
+            <div class="pixel-box-wood p-6 text-white text-center space-y-3 rounded-lg relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 text-7xl opacity-20 pointer-events-none">🏰</div>
+                <h2 class="font-pixel text-base sm:text-xl text-yellow-300">BENVENUTO, MAESTRO COSTRUTTORE!</h2>
+                <p class="max-w-2xl mx-auto text-stone-200 text-sm leading-relaxed">
+                    Costruisci le tue competenze grammaticali! Separa le frasi nella miniera, classifica proposizioni principali spezzate dall'inciso al banco da lavoro ed esplora l'albero logico del periodo.
+                </p>
+                <div class="pt-2 flex flex-wrap justify-center gap-3">
+                    <button onclick="speakText('Benvenuto in Sintassi Craft. Scegli una modalità per iniziare la tua avventura!')" class="bg-black/50 hover:bg-black/70 text-yellow-300 px-4 py-2 rounded text-xs flex items-center gap-2 border border-yellow-500 font-bold">
+                        📢 Ascolta Istruzioni Vocali
+                    </button>
+                    <button onclick="openGuideModal()" class="bg-mc-diamond/90 hover:bg-mc-diamond text-black px-4 py-2 rounded text-xs flex items-center gap-2 border border-black font-pixel font-bold">
+                        📖 Guida al Periodo
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCHEDE DELLE MODALITÀ -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Modalità 1: Miniera Frasi -->
+                <div class="pixel-box p-5 flex flex-col justify-between hover:border-mc-emerald transition-all transform hover:-translate-y-1 bg-gradient-to-b from-stone-100 to-stone-200">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-3xl">⛏️</span>
+                            <span class="bg-mc-grass text-white text-xs font-pixel px-2 py-1 rounded">LIVELLO 1</span>
+                        </div>
+                        <h3 class="font-pixel text-sm text-stone-900 mb-2">1. MINIERA FRASI</h3>
+                        <p class="text-sm text-stone-700 leading-relaxed mb-4">
+                            Piazza i <strong>Blocchi Separatori 🧱</strong> esattamente nei punti in cui finisce una proposizione e ne comincia un'altra (sia con soggetto unito sia separato)!
+                        </p>
+                    </div>
+                    <button onclick="startMode('mining')" class="pixel-btn bg-mc-grass text-white font-pixel text-xs py-3 w-full rounded hover:brightness-110">
+                        ESPLORA MINIERA
+                    </button>
+                </div>
+
+                <!-- Modalità 2: Banco da Crafting -->
+                <div class="pixel-box p-5 flex flex-col justify-between hover:border-mc-gold transition-all transform hover:-translate-y-1 bg-gradient-to-b from-stone-100 to-stone-200">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-3xl">🛠️</span>
+                            <span class="bg-mc-gold text-black text-xs font-pixel px-2 py-1 rounded">LIVELLO 2</span>
+                        </div>
+                        <h3 class="font-pixel text-sm text-stone-900 mb-2">2. CRAFTING PERIODI</h3>
+                        <p class="text-sm text-stone-700 leading-relaxed mb-4">
+                            Classifica ogni blocco: <strong>💎 Principale</strong>, <strong>🪙 Coordinata</strong> o <strong>🟢 Subordinata</strong>, allenandoti sia con frasi lineari sia spezzate dall'inciso!
+                        </p>
+                    </div>
+                    <button onclick="startMode('crafting')" class="pixel-btn bg-mc-gold text-black font-pixel text-xs py-3 w-full rounded hover:brightness-110">
+                        APRI BANCO CRAFTING
+                    </button>
+                </div>
+
+                <!-- Modalità 3: Fortezza Completa -->
+                <div class="pixel-box p-5 flex flex-col justify-between hover:border-mc-diamond transition-all transform hover:-translate-y-1 bg-gradient-to-b from-stone-100 to-stone-200">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-3xl">🏰</span>
+                            <span class="bg-mc-diamond text-black text-xs font-pixel px-2 py-1 rounded">LIVELLO 3</span>
+                        </div>
+                        <h3 class="font-pixel text-sm text-stone-900 mb-2">3. FORTEZZA SINTATTICA</h3>
+                        <p class="text-sm text-stone-700 leading-relaxed mb-4">
+                            Analisi avanzata: individua forma (<em>esplicita / implicita</em>) e funzione (<em>causale, temporale, finale, relativa, oggettiva...</em>).
+                        </p>
+                    </div>
+                    <button onclick="startMode('fortress')" class="pixel-btn bg-mc-diamond text-black font-pixel text-xs py-3 w-full rounded hover:brightness-110">
+                        ENTRA NELLA FORTEZZA
+                    </button>
+                </div>
+
+                <!-- Modalità 4: Costruzione Guidata Grafico ad Albero -->
+                <div class="pixel-box p-5 flex flex-col justify-between hover:border-purple-600 transition-all transform hover:-translate-y-1 bg-gradient-to-b from-stone-100 to-stone-200">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-3xl">🌳</span>
+                            <span class="bg-purple-700 text-white text-xs font-pixel px-2 py-1 rounded">LIVELLO 4</span>
+                        </div>
+                        <h3 class="font-pixel text-sm text-stone-900 mb-2">4. GRAFICO AD ALBERO</h3>
+                        <p class="text-sm text-stone-700 leading-relaxed mb-4">
+                            Costruisci <strong>passo dopo passo</strong> il grafico ad albero del periodo: piazza la Principale in cima, le Coordinate sullo stesso piano e aggancia le Subordinate (1° e 2° grado)!
+                        </p>
+                    </div>
+                    <button onclick="startMode('tree')" class="pixel-btn bg-purple-700 text-white font-pixel text-xs py-3 w-full rounded hover:brightness-110">
+                        COSTRUISCI L'ALBERO
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==========================================
+             2. AREA DI GIOCO ATTIVA (WORKSPACE)
+             ========================================== -->
+        <section id="game-workspace" class="hidden space-y-6">
+            
+            <!-- Barra di Controllo Sessione -->
+            <div class="flex justify-between items-center bg-black/60 p-3 rounded-lg border-2 border-stone-700 flex-wrap gap-2">
+                <button onclick="returnToMenu()" class="pixel-btn bg-stone-700 text-white text-xs font-pixel px-3 py-2 rounded flex items-center gap-2">
+                    ⬅️ MENU
+                </button>
+                <div class="flex items-center gap-2">
+                    <span id="current-mode-badge" class="font-pixel text-xs px-3 py-1 rounded border">
+                        MODALITÀ
+                    </span>
+                    <span id="question-tracker" class="font-pixel text-xs text-white">
+                        Frase 1/14
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="getRandomSentence()" class="pixel-btn bg-mc-lapis text-white text-xs font-pixel px-3 py-2 rounded flex items-center gap-1 hover:brightness-110" title="Nuova frase casuale">
+                        🎲 ALTRA FRASE
+                    </button>
+                    <button onclick="readCurrentSentence()" class="pixel-btn bg-mc-gold text-black text-xs font-pixel px-3 py-2 rounded flex items-center gap-1" title="Tasto rapido: Barra Spaziatrice">
+                        🗣️ LEGGIMI
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtro Tipologia Principale (Soggetto Unito / Separato) -->
+            <div class="flex flex-wrap items-center justify-between gap-2 bg-black/45 px-3 py-2 rounded-lg border border-stone-700 text-xs">
+                <span class="font-pixel text-[10px] text-stone-300">FILTRA FRASI:</span>
+                <div class="flex flex-wrap gap-2">
+                    <button id="filter-btn-all" onclick="setSentenceFilter('all')" class="pixel-btn bg-mc-gold text-black px-3 py-1 rounded text-[11px] font-bold">
+                        🎲 Tutte (14)
+                    </button>
+                    <button id="filter-btn-united" onclick="setSentenceFilter('united')" class="pixel-btn bg-stone-700 text-white px-3 py-1 rounded text-[11px] font-bold">
+                        ➡️ Soggetto Unito (7)
+                    </button>
+                    <button id="filter-btn-split" onclick="setSentenceFilter('split')" class="pixel-btn bg-stone-700 text-white px-3 py-1 rounded text-[11px] font-bold">
+                        🔗 Soggetto Separato (7)
+                    </button>
+                </div>
+            </div>
+
+            <!-- AIUTANTE VILLAGER -->
+            <div id="villager-hint-box" class="pixel-box bg-stone-100 p-4 flex items-start gap-4 rounded-lg border-l-8 border-mc-diamond transition-all">
+                <div class="text-4xl shrink-0 floating select-none">👨‍🌾</div>
+                <div class="space-y-1 flex-grow">
+                    <div class="flex justify-between items-center">
+                        <span class="font-pixel text-xs text-stone-800">IL SAGGIO VILLAGER SUGGERISCE:</span>
+                        <button onclick="speakText(document.getElementById('villager-hint-text').innerText)" class="text-xs bg-stone-300 hover:bg-stone-400 p-1 rounded font-bold" title="Ascolta">🔊</button>
+                    </div>
+                    <p id="villager-hint-text" class="text-sm text-stone-900 font-medium">
+                        Cerca prima i verbi! Ogni verbo regge una proposizione.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SCHEDA DI LAVORO -->
+            <div class="pixel-box p-6 space-y-6 bg-stone-100 rounded-lg">
+                
+                <!-- Testo del Periodo -->
+                <div class="space-y-2">
+                    <div class="flex flex-wrap justify-between items-center gap-2">
+                        <span class="text-xs font-pixel text-stone-500 uppercase tracking-widest">PERIODO DA ANALIZZARE</span>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span id="structure-type-badge" class="text-xs font-bold px-2 py-0.5 rounded border"></span>
+                            <span id="verbs-count-badge" class="text-xs font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded border border-amber-400"></span>
+                        </div>
+                    </div>
+                    <div id="sentence-display-area" class="p-4 bg-white border-2 border-stone-800 rounded-lg text-lg font-medium leading-relaxed shadow-inner">
+                        <!-- Iniettato via JS -->
+                    </div>
+                </div>
+
+                <!-- ZONA DI INTERAZIONE DINAMICA -->
+                <div id="interaction-zone" class="space-y-6">
+                    <!-- Iniettato via JS in base alla modalità -->
+                </div>
+
+                <!-- ALBERO SINTATTICO VISIVO (A COMPARSA DOPO LA VERIFICA O SU RICHIESTA) -->
+                <div id="syntax-tree-container" class="hidden p-5 bg-white border-4 border-stone-800 rounded-lg space-y-4">
+                    <div class="flex justify-between items-center border-b-2 border-stone-300 pb-2">
+                        <div class="font-pixel text-xs text-stone-800 flex items-center gap-2">
+                            <span>🌳</span> SCHEMA GRAFICO DEL PERIODO (ALBERO SINTATTICO)
+                        </div>
+                        <button onclick="toggleSyntaxTree()" class="text-xs font-bold px-2 py-1 bg-stone-200 hover:bg-stone-300 rounded">Nascondi</button>
+                    </div>
+                    <div id="syntax-tree-canvas" class="flex flex-col items-center gap-4 py-2">
+                        <!-- Generato dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- FEEDBACK VISIVO / SPIEGAZIONE ERRORE -->
+                <div id="feedback-box" class="hidden p-4 rounded-lg font-medium text-sm flex items-start gap-3 border-3">
+                    <span id="feedback-icon" class="text-2xl shrink-0"></span>
+                    <div class="flex-grow space-y-1">
+                        <div id="feedback-title" class="font-bold text-sm"></div>
+                        <div id="feedback-text" class="text-xs sm:text-sm"></div>
+                    </div>
+                </div>
+
+                <!-- PULSANTI DI AZIONE -->
+                <div class="flex flex-wrap justify-between items-center gap-3 pt-4 border-t-2 border-stone-300">
+                    <div class="flex gap-2">
+                        <button id="btn-give-hint" onclick="provideHint()" class="pixel-btn bg-mc-sand text-black font-pixel text-xs px-4 py-3 rounded flex items-center gap-1">
+                            💡 AIUTO
+                        </button>
+                        <button id="btn-toggle-tree" onclick="toggleSyntaxTree()" class="pixel-btn bg-stone-300 hover:bg-stone-400 text-black font-pixel text-xs px-4 py-3 rounded flex items-center gap-1">
+                            🌳 ALBERO SINTATTICO
+                        </button>
+                    </div>
+                    <button id="btn-check-action" onclick="checkCurrentStep()" class="pixel-btn bg-mc-emerald text-white font-pixel text-xs px-6 py-3 rounded hover:brightness-110">
+                        VERIFICA CRAFTING ✔️
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ==========================================
+         3. MODALI: ZAINO, GUIDA, ACCESSIBILITÀ
+         ========================================== -->
+
+    <!-- MODALE ZAINO DEGLI STRUMENTI -->
+    <div id="inventory-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="pixel-box-dark max-w-lg w-full p-6 rounded-lg space-y-5 border-4 border-yellow-500">
+            <div class="flex justify-between items-center border-b border-stone-600 pb-3">
+                <h3 class="font-pixel text-sm text-yellow-300 flex items-center gap-2">
+                    <span>🎒</span> ZAINO DEL COSTRUTTORE
+                </h3>
+                <button onclick="closeInventoryModal()" class="text-lg font-bold p-1 hover:bg-stone-700 rounded">❌</button>
+            </div>
+            
+            <p class="text-xs text-stone-300">
+                Guadagna XP per forgiare strumenti più potenti. Ogni livello sblocca nuovi minerali per il tuo equipaggiamento!
+            </p>
+
+            <div class="grid grid-cols-5 gap-3 text-center" id="inventory-grid">
+                <!-- Generato da JS -->
+            </div>
+
+            <div class="p-3 bg-stone-800 rounded border border-stone-600 text-xs text-stone-300 space-y-1">
+                <div class="text-yellow-400 font-bold font-pixel text-[11px]" id="tool-details-name">Piccone di Legno</div>
+                <div id="tool-details-desc">Il tuo primo strumento per scavare nei periodi semplici.</div>
+            </div>
+
+            <div class="text-right">
+                <button onclick="closeInventoryModal()" class="pixel-btn bg-mc-emerald text-white font-pixel text-xs px-5 py-2 rounded">
+                    CHIUDI ZAINO
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE GUIDA DIDATTICA AL PERIODO -->
+    <div id="guide-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="pixel-box bg-stone-100 max-w-2xl w-full p-6 rounded-lg space-y-5 border-4 border-stone-900 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b-2 border-stone-400 pb-3">
+                <h3 class="font-pixel text-sm sm:text-base text-stone-900 flex items-center gap-2">
+                    <span>📖</span> PICCOLO MANUALE DEL PERIODO
+                </h3>
+                <button onclick="closeGuideModal()" class="text-lg font-bold p-1 hover:bg-stone-300 rounded">❌</button>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm text-stone-800 leading-relaxed">
+                <div class="p-3 bg-cyan-100 border-2 border-cyan-500 rounded">
+                    <strong class="font-pixel text-xs text-cyan-900 block mb-1">💎 1. PROPOSIZIONE PRINCIPALE</strong>
+                    Ha senso compiuto da sola e non dipende da nessun'altra proposizione. 
+                    <br><em>Attenzione all'Inciso:</em> se trovi <em>"Steve, che correva, cadde"</em>, la principale è <strong>"Steve ... cadde"</strong>, spezzata in due parti dal pronome relativo!
+                </div>
+
+                <div class="p-3 bg-amber-100 border-2 border-amber-500 rounded">
+                    <strong class="font-pixel text-xs text-amber-900 block mb-1">🪙 2. PROPOSIZIONE COORDINATA</strong>
+                    È collegata a un'altra proposizione tramite una congiunzione coordinante (<em>e, ma, però, o, quindi, né...</em>) o tramite punteggiatura debole (<em>, ; :</em>). Si trova sullo stesso piano logico!
+                </div>
+
+                <div class="p-3 bg-emerald-100 border-2 border-emerald-500 rounded">
+                    <strong class="font-pixel text-xs text-emerald-900 block mb-1">🟢 3. PROPOSIZIONE SUBORDINATA</strong>
+                    Non è autonoma: dipende da un'altra proposizione (reggente) per completare il significato.
+                    <ul class="list-disc ml-5 mt-1 space-y-0.5">
+                        <li><strong>Esplicita:</strong> Verbo di modo finito (indicativo, congiuntivo, condizionale).</li>
+                        <li><strong>Implicita:</strong> Verbo di modo indefinito (infinito, participio, gerundio).</li>
+                    </ul>
+                </div>
+
+                <div class="p-3 bg-purple-100 border-2 border-purple-500 rounded">
+                    <strong class="font-pixel text-xs text-purple-900 block mb-1">🌳 4. COME COSTRUIRE IL GRAFICO AD ALBERO</strong>
+                    <ol class="list-decimal ml-5 mt-1 space-y-1">
+                        <li><strong>Livello 0 (In cima):</strong> metti la <strong>💎 Principale</strong>. Se ha il soggetto separato dall'inciso, ricomponi le due parti insieme!</li>
+                        <li><strong>Stesso piano (↔️):</strong> affianca eventuali <strong>🪙 Coordinate</strong> con una freccia orizzontale.</li>
+                        <li><strong>Livello 1 (⬇️):</strong> scendi di un gradino e collega le <strong>🟢 Subordinate di 1° grado</strong> sotto la reggente da cui dipendono.</li>
+                        <li><strong>Livello 2 (⬇️):</strong> se una subordinata dipende da un'altra subordinata, scendi ancora con la <strong>🟣 Subordinata di 2° grado</strong>!</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="text-right">
+                <button onclick="closeGuideModal()" class="pixel-btn bg-mc-emerald text-white font-pixel text-xs px-5 py-2 rounded">
+                    HO CAPITO!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE IMPOSTAZIONI LEGGIBILITÀ -->
+    <div id="accessibility-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="pixel-box bg-stone-200 max-w-xl w-full p-6 rounded-lg space-y-5 border-4 border-stone-900 max-h-[90vh] overflow-y-auto">
+            
+            <div class="flex justify-between items-center border-b-2 border-stone-400 pb-3">
+                <h3 class="font-pixel text-sm sm:text-base text-stone-900 flex items-center gap-2">
+                    <span>⚙️</span> OPZIONI DI LEGGIBILITÀ E COMPORTAMENTO
+                </h3>
+                <button onclick="closeAccessibilityModal()" class="text-xl font-bold p-1 hover:bg-stone-300 rounded">❌</button>
+            </div>
+
+            <div class="space-y-4 text-sm">
+                <!-- Font -->
+                <div class="space-y-2">
+                    <label class="font-bold text-stone-800 block">Stile del Carattere:</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <button onclick="changeFontFamily('dyslexic')" class="pixel-btn bg-white p-3 rounded text-left border hover:bg-yellow-50 font-dyslexic text-sm">
+                            <div class="font-bold">Morbido & Chiaro</div>
+                            <div class="text-[11px] text-stone-500">Nunito (Default)</div>
+                        </button>
+                        <button onclick="changeFontFamily('accessible')" class="pixel-btn bg-white p-3 rounded text-left border hover:bg-yellow-50 font-accessible text-sm">
+                            <div class="font-bold">Alta Leggibilità</div>
+                            <div class="text-[11px] text-stone-500">Atkinson DSA</div>
+                        </button>
+                        <button onclick="changeFontFamily('pixel')" class="pixel-btn bg-white p-3 rounded text-left border hover:bg-yellow-50 text-xs" style="font-family: 'Press Start 2P', monospace;">
+                            <div class="font-bold">Pixel Retro</div>
+                            <div class="text-[10px] text-stone-500 mt-1">Stile Minecraft</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dimensione Testo -->
+                <div class="space-y-1">
+                    <div class="flex justify-between">
+                        <label class="font-bold text-stone-800">Dimensione Testo:</label>
+                        <span id="font-size-val" class="font-mono font-bold">18px</span>
+                    </div>
+                    <input type="range" min="16" max="26" value="18" id="slider-font-size" oninput="updateFontSize(this.value)" class="w-full h-3 bg-stone-400 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <!-- Spaziatura -->
+                <div class="space-y-1">
+                    <div class="flex justify-between">
+                        <label class="font-bold text-stone-800">Spaziatura & Interlinea:</label>
+                        <span id="line-height-val" class="font-mono font-bold">Ampia</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="setSpacing('normal')" class="pixel-btn bg-white px-3 py-1.5 rounded text-xs">Normale</button>
+                        <button onclick="setSpacing('wide')" class="pixel-btn bg-mc-gold px-3 py-1.5 rounded text-xs font-bold">Ampia</button>
+                        <button onclick="setSpacing('extra')" class="pixel-btn bg-white px-3 py-1.5 rounded text-xs">Molto Spaziata</button>
+                    </div>
+                </div>
+
+                <!-- Voce Femminile e Velocità Lettura Vocale -->
+                <div class="space-y-2">
+                    <label class="font-bold text-stone-800 block">Voce di Lettura (Italiano):</label>
+                    <div class="flex gap-2 items-center">
+                        <select id="select-tts-voice" onchange="updateTTSVoice(this.value)" class="flex-grow p-2 bg-white border-2 border-stone-800 rounded text-xs font-medium">
+                            <option value="">Caricamento voci naturali...</option>
+                        </select>
+                        <button onclick="speakText('Ciao! Sono la tua voce guida per l\'analisi del periodo.')" class="pixel-btn bg-mc-gold text-black px-3 py-2 rounded text-xs font-bold whitespace-nowrap" title="Ascolta anteprima voce">
+                            🔊 Prova
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="font-bold text-stone-800 block">Velocità Voce:</label>
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs">Lenta</span>
+                        <input type="range" min="0.7" max="1.25" step="0.05" value="0.95" id="slider-tts-rate" onchange="updateTTSRate(this.value)" class="w-full h-3 bg-stone-400 rounded-lg appearance-none cursor-pointer">
+                        <span class="text-xs">Veloce</span>
+                    </div>
+                </div>
+
+                <!-- Contrasto -->
+                <div class="space-y-1">
+                    <label class="font-bold text-stone-800 block">Tema Visivo:</label>
+                    <div class="flex gap-3">
+                        <button onclick="setTheme('default')" class="pixel-btn bg-stone-300 text-stone-900 px-3 py-2 rounded text-xs font-bold">Standard Minecraft</button>
+                        <button onclick="setTheme('high-contrast')" class="pixel-btn bg-black text-yellow-300 px-3 py-2 rounded text-xs font-bold">Alto Contrasto</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-2 text-right">
+                <button onclick="closeAccessibilityModal()" class="pixel-btn bg-mc-emerald text-white font-pixel text-xs px-5 py-2.5 rounded">
+                    SALVA E GIOCA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICA OBIETTIVO SBLOCCATO / LEVEL UP -->
+    <div id="achievement-popup" class="fixed bottom-6 right-6 pixel-box-dark bg-mc-woodDark text-white p-4 rounded-lg shadow-2xl flex items-center gap-4 transform translate-y-36 transition-all duration-500 z-50 border-2 border-yellow-400 max-w-sm">
+        <div class="text-3xl bg-black/60 p-2 rounded border border-yellow-500" id="ach-icon">🏆</div>
+        <div>
+            <div class="text-[10px] font-pixel text-yellow-400 uppercase tracking-wide" id="ach-title">OBIETTIVO SBLOCCATO!</div>
+            <div class="text-xs sm:text-sm font-medium text-stone-100" id="ach-desc">Mastro delle Principali</div>
+        </div>
+    </div>
+
+    <!-- PIÈ DI PAGINA -->
+    <footer class="bg-black text-stone-400 text-center text-xs py-4 border-t-2 border-stone-800 space-y-1">
+        <div>⛏️ Sintassi Craft - Didattica Interattiva dell'Analisi del Periodo</div>
+        <div class="text-stone-500 text-[11px]">Scuola Secondaria di Primo Grado • Accessibile DSA & BES</div>
+    </footer>
+
+    <!-- LOGICA E JAVASCRIPT APPLICATIVO -->
+    <script>
+        /* =========================================================================
+           1. DATABASE FRASI (Con indici di cesura esatti per la Miniera)
+           ========================================================================= */
+        const SENTENCE_DATABASE = [
+            {
+                id: 1,
+                fullText: "Steve, esplorando la caverna buia, ha trovato un prezioso filone di diamante.",
+                verbs: ["esplorando", "ha trovato"],
+                hasSplit: true,
+                // Le cesure (split points) avvengono dopo la parola all'indice indicato (0-based)
+                // "Steve," (0) | "esplorando la caverna buia," (4) | "ha trovato..."
+                targetSplits: [0, 4],
+                clauses: [
+                    {
+                        text: "Steve",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Soggetto staccato)",
+                        part: 1,
+                        totalParts: 2,
+                        linkId: "p1",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "esplorando la caverna buia",
+                        type: "subordinata",
+                        typeName: "Subordinata Temporale / Modale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub1",
+                        grade: 1,
+                        form: "implicita",
+                        kind: "temporale",
+                        dependsOn: "p1"
+                    },
+                    {
+                        text: "ha trovato un prezioso filone di diamante",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Predicato staccato)",
+                        part: 2,
+                        totalParts: 2,
+                        linkId: "p1",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    }
+                ],
+                hintVerb: "I verbi sono 'esplorando' (gerundio) e 'ha trovato' (indicativo).",
+                hintStructure: "🔗 'Steve' e 'ha trovato un prezioso filone di diamante' formano l'unica Proposizione Principale spezzata dall'inciso al gerundio!"
+            },
+            {
+                id: 2,
+                fullText: "Alex, quando cala la notte, accende la torcia ed impugna la spada di ferro.",
+                verbs: ["cala", "accende", "impugna"],
+                hasSplit: true,
+                targetSplits: [0, 4, 7],
+                clauses: [
+                    {
+                        text: "Alex",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 1)",
+                        part: 1,
+                        totalParts: 2,
+                        linkId: "p2",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "quando cala la notte",
+                        type: "subordinata",
+                        typeName: "Subordinata Temporale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub2",
+                        grade: 1,
+                        form: "esplicita",
+                        kind: "temporale",
+                        dependsOn: "p2"
+                    },
+                    {
+                        text: "accende la torcia",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 2)",
+                        part: 2,
+                        totalParts: 2,
+                        linkId: "p2",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "ed impugna la spada di ferro",
+                        type: "coordinata",
+                        typeName: "Coordinata alla Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "coord1",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "copulativa",
+                        dependsOn: "p2"
+                    }
+                ],
+                hintVerb: "I verbi sono 'cala', 'accende' e 'impugna'.",
+                hintStructure: "'Alex ... accende la torcia' è la proposizione principale, spezzata dalla temporale 'quando cala la notte'."
+            },
+            {
+                id: 3,
+                fullText: "Il Villager, dopo aver scambiato gli smeraldi, rientra nella casa ed accende la fornace.",
+                verbs: ["aver scambiato", "rientra", "accende"],
+                hasSplit: true,
+                targetSplits: [1, 6, 9],
+                clauses: [
+                    {
+                        text: "Il Villager",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 1)",
+                        part: 1,
+                        totalParts: 2,
+                        linkId: "p3",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "dopo aver scambiato gli smeraldi",
+                        type: "subordinata",
+                        typeName: "Subordinata Temporale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub3",
+                        grade: 1,
+                        form: "implicita",
+                        kind: "temporale",
+                        dependsOn: "p3"
+                    },
+                    {
+                        text: "rientra nella casa",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 2)",
+                        part: 2,
+                        totalParts: 2,
+                        linkId: "p3",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "ed accende la fornace",
+                        type: "coordinata",
+                        typeName: "Coordinata alla Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "coord2",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "copulativa",
+                        dependsOn: "p3"
+                    }
+                ],
+                hintVerb: "I verbi sono 'aver scambiato' (infinito passato), 'rientra' e 'accende'.",
+                hintStructure: "Ricollega 'Il Villager' a 'rientra nella casa' per ricostruire la principale integra!"
+            },
+            {
+                id: 4,
+                fullText: "L'esploratore, che ha addomesticato un lupo, attraversa la foresta di betulle.",
+                verbs: ["ha addomesticato", "attraversa"],
+                hasSplit: true,
+                targetSplits: [0, 5],
+                clauses: [
+                    {
+                        text: "L'esploratore",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 1)",
+                        part: 1,
+                        totalParts: 2,
+                        linkId: "p4",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "che ha addomesticato un lupo",
+                        type: "subordinata",
+                        typeName: "Subordinata Relativa",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub4",
+                        grade: 1,
+                        form: "esplicita",
+                        kind: "relativa",
+                        dependsOn: "p4"
+                    },
+                    {
+                        text: "attraversa la foresta di betulle",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 2)",
+                        part: 2,
+                        totalParts: 2,
+                        linkId: "p4",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    }
+                ],
+                hintVerb: "I verbi sono 'ha addomesticato' e 'attraversa'.",
+                hintStructure: "'che ha addomesticato un lupo' è una proposizione relativa che si incunea nella principale."
+            },
+            {
+                id: 5,
+                fullText: "Il Creeper, spaventato dai gatti del villaggio, scappa verso la montagna.",
+                verbs: ["spaventato", "scappa"],
+                hasSplit: true,
+                targetSplits: [1, 6],
+                clauses: [
+                    {
+                        text: "Il Creeper",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 1)",
+                        part: 1,
+                        totalParts: 2,
+                        linkId: "p5",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "spaventato dai gatti del villaggio",
+                        type: "subordinata",
+                        typeName: "Subordinata Causale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub5",
+                        grade: 1,
+                        form: "implicita",
+                        kind: "causale",
+                        dependsOn: "p5"
+                    },
+                    {
+                        text: "scappa verso la montagna",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 2)",
+                        part: 2,
+                        totalParts: 2,
+                        linkId: "p5",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    }
+                ],
+                hintVerb: "I verbi sono 'spaventato' (participio passato con valore verbale) e 'scappa'.",
+                hintStructure: "'spaventato dai gatti del villaggio' esprime la causa (perché ha paura dei gatti)."
+            },
+            {
+                id: 6,
+                fullText: "Steve, per sconfiggere i mob ostili, ha fabbricato un'armatura di diamante.",
+                verbs: ["sconfiggere", "ha fabbricato"],
+                hasSplit: true,
+                targetSplits: [0, 5],
+                clauses: [
+                    {
+                        text: "Steve",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 1)",
+                        part: 1,
+                        totalParts: 2,
+                        linkId: "p6",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "per sconfiggere i mob ostili",
+                        type: "subordinata",
+                        typeName: "Subordinata Finale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub6",
+                        grade: 1,
+                        form: "implicita",
+                        kind: "finale",
+                        dependsOn: "p6"
+                    },
+                    {
+                        text: "ha fabbricato un'armatura di diamante",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 2)",
+                        part: 2,
+                        totalParts: 2,
+                        linkId: "p6",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    }
+                ],
+                hintVerb: "I verbi sono 'sconfiggere' (infinito) e 'ha fabbricato' (indicativo).",
+                hintStructure: "'per sconfiggere i mob ostili' indica il fine dell'azione (subordinata finale)."
+            },
+            {
+                id: 7,
+                fullText: "I minatori estraggono il carbone e costruiscono torce affinché la miniera sia illuminata.",
+                verbs: ["estraggono", "costruiscono", "sia illuminata"],
+                hasSplit: false,
+                targetSplits: [4, 7],
+                clauses: [
+                    {
+                        text: "I minatori estraggono il carbone",
+                        type: "principale",
+                        typeName: "Proposizione Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "p7",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "e costruiscono torce",
+                        type: "coordinata",
+                        typeName: "Coordinata alla Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "coord7",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "copulativa",
+                        dependsOn: "p7"
+                    },
+                    {
+                        text: "affinché la miniera sia illuminata",
+                        type: "subordinata",
+                        typeName: "Subordinata Finale (1° grado)",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub7",
+                        grade: 1,
+                        form: "esplicita",
+                        kind: "finale",
+                        dependsOn: "coord7"
+                    }
+                ],
+                hintVerb: "I verbi sono 'estraggono', 'costruiscono' e 'sia illuminata' (congiuntivo).",
+                hintStructure: "Qui il soggetto è unito alla principale ('I minatori estraggono il carbone'), seguita da una coordinata ('e costruiscono torce') e da una finale esplicita."
+            },
+            {
+                id: 8,
+                fullText: "Un drago dell'End, volando sopra le torri di ossidiana, ruggisce con forza.",
+                verbs: ["volando", "ruggisce"],
+                hasSplit: true,
+                targetSplits: [2, 8],
+                clauses: [
+                    {
+                        text: "Un drago dell'End",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 1)",
+                        part: 1,
+                        totalParts: 2,
+                        linkId: "p8",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "volando sopra le torri di ossidiana",
+                        type: "subordinata",
+                        typeName: "Subordinata Temporale / Modale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub8",
+                        grade: 1,
+                        form: "implicita",
+                        kind: "temporale",
+                        dependsOn: "p8"
+                    },
+                    {
+                        text: "ruggisce con forza",
+                        type: "principale",
+                        typeName: "Proposizione Principale (Parte 2)",
+                        part: 2,
+                        totalParts: 2,
+                        linkId: "p8",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    }
+                ],
+                hintVerb: "I verbi sono 'volando' (gerundio) e 'ruggisce' (indicativo).",
+                hintStructure: "'volando sopra le torri di ossidiana' è una subordinata implicita inserita come inciso tra soggetto e predicato."
+            },
+            {
+                id: 9,
+                fullText: "Steve costruisce un rifugio sicuro perché sta arrivando un temporale.",
+                verbs: ["costruisce", "sta arrivando"],
+                hasSplit: false,
+                targetSplits: [4],
+                clauses: [
+                    {
+                        text: "Steve costruisce un rifugio sicuro",
+                        type: "principale",
+                        typeName: "Proposizione Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "p9",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "perché sta arrivando un temporale",
+                        type: "subordinata",
+                        typeName: "Subordinata Causale (1° grado)",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub9",
+                        grade: 1,
+                        form: "esplicita",
+                        kind: "causale",
+                        dependsOn: "p9"
+                    }
+                ],
+                hintVerb: "I verbi sono 'costruisce' e 'sta arrivando'.",
+                hintStructure: "Soggetto unito alla principale: 'Steve costruisce un rifugio sicuro' regge la subordinata causale introdotta da 'perché'."
+            },
+            {
+                id: 10,
+                fullText: "Alex prepara lo zaino e saluta il lupo prima che sorga il sole.",
+                verbs: ["prepara", "saluta", "sorga"],
+                hasSplit: false,
+                targetSplits: [3, 7],
+                clauses: [
+                    {
+                        text: "Alex prepara lo zaino",
+                        type: "principale",
+                        typeName: "Proposizione Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "p10",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "e saluta il lupo",
+                        type: "coordinata",
+                        typeName: "Coordinata alla Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "coord10",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "copulativa",
+                        dependsOn: "p10"
+                    },
+                    {
+                        text: "prima che sorga il sole",
+                        type: "subordinata",
+                        typeName: "Subordinata Temporale (1° grado)",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub10",
+                        grade: 1,
+                        form: "esplicita",
+                        kind: "temporale",
+                        dependsOn: "coord10"
+                    }
+                ],
+                hintVerb: "I verbi sono 'prepara', 'saluta' e 'sorga' (congiuntivo).",
+                hintStructure: "'Alex prepara lo zaino' è la principale intera, affiancata dalla coordinata 'e saluta il lupo' e seguita dalla temporale 'prima che sorga il sole'."
+            },
+            {
+                id: 11,
+                fullText: "Il fabbro spera di forgiare una spada che illumini la grotta.",
+                verbs: ["spera", "forgiare", "illumini"],
+                hasSplit: false,
+                targetSplits: [2, 6],
+                clauses: [
+                    {
+                        text: "Il fabbro spera",
+                        type: "principale",
+                        typeName: "Proposizione Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "p11",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "di forgiare una spada",
+                        type: "subordinata",
+                        typeName: "Subordinata Oggettiva (1° grado)",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub11_1",
+                        grade: 1,
+                        form: "implicita",
+                        kind: "oggettiva",
+                        dependsOn: "p11"
+                    },
+                    {
+                        text: "che illumini la grotta",
+                        type: "subordinata",
+                        typeName: "Subordinata Relativa (2° grado)",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub11_2",
+                        grade: 2,
+                        form: "esplicita",
+                        kind: "relativa",
+                        dependsOn: "sub11_1"
+                    }
+                ],
+                hintVerb: "I verbi sono 'spera' (indicativo), 'forgiare' (infinito) e 'illumini' (congiuntivo).",
+                hintStructure: "Albero a 3 livelli! 'Il fabbro spera' (Principale) ➔ 'di forgiare una spada' (1° grado, oggettiva) ➔ 'che illumini la grotta' (2° grado, relativa)."
+            },
+            {
+                id: 12,
+                fullText: "I giocatori raccolgono molta legna per costruire una barca e navigano verso l'isola.",
+                verbs: ["raccolgono", "costruire", "navigano"],
+                hasSplit: false,
+                targetSplits: [4, 8],
+                clauses: [
+                    {
+                        text: "I giocatori raccolgono molta legna",
+                        type: "principale",
+                        typeName: "Proposizione Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "p12",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "per costruire una barca",
+                        type: "subordinata",
+                        typeName: "Subordinata Finale (1° grado)",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub12",
+                        grade: 1,
+                        form: "implicita",
+                        kind: "finale",
+                        dependsOn: "p12"
+                    },
+                    {
+                        text: "e navigano verso l'isola",
+                        type: "coordinata",
+                        typeName: "Coordinata alla Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "coord12",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "copulativa",
+                        dependsOn: "p12"
+                    }
+                ],
+                hintVerb: "I verbi sono 'raccolgono', 'costruire' (infinito) e 'navigano'.",
+                hintStructure: "'I giocatori raccolgono molta legna' è la principale (soggetto unito), coordinata a 'e navigano verso l'isola', con la finale 'per costruire una barca'."
+            },
+            {
+                id: 13,
+                fullText: "Il golem di ferro protegge il villaggio che sorge vicino al fiume.",
+                verbs: ["protegge", "sorge"],
+                hasSplit: false,
+                targetSplits: [6],
+                clauses: [
+                    {
+                        text: "Il golem di ferro protegge il villaggio",
+                        type: "principale",
+                        typeName: "Proposizione Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "p13",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "che sorge vicino al fiume",
+                        type: "subordinata",
+                        typeName: "Subordinata Relativa (1° grado)",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub13",
+                        grade: 1,
+                        form: "esplicita",
+                        kind: "relativa",
+                        dependsOn: "p13"
+                    }
+                ],
+                hintVerb: "I verbi sono 'protegge' e 'sorge'.",
+                hintStructure: "Soggetto unito alla principale: 'Il golem di ferro protegge il villaggio', seguita dalla relativa 'che sorge vicino al fiume'."
+            },
+            {
+                id: 14,
+                fullText: "Steve corre verso casa poiché vuole accendere la fornace per fondere il ferro.",
+                verbs: ["corre", "vuole accendere", "fondere"],
+                hasSplit: false,
+                targetSplits: [3, 8],
+                clauses: [
+                    {
+                        text: "Steve corre verso casa",
+                        type: "principale",
+                        typeName: "Proposizione Principale",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "p14",
+                        grade: 0,
+                        form: "esplicita",
+                        kind: "indipendente"
+                    },
+                    {
+                        text: "poiché vuole accendere la fornace",
+                        type: "subordinata",
+                        typeName: "Subordinata Causale (1° grado)",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub14_1",
+                        grade: 1,
+                        form: "esplicita",
+                        kind: "causale",
+                        dependsOn: "p14"
+                    },
+                    {
+                        text: "per fondere il ferro",
+                        type: "subordinata",
+                        typeName: "Subordinata Finale (2° grado)",
+                        part: 1,
+                        totalParts: 1,
+                        linkId: "sub14_2",
+                        grade: 2,
+                        form: "implicita",
+                        kind: "finale",
+                        dependsOn: "sub14_1"
+                    }
+                ],
+                hintVerb: "I verbi sono 'corre', 'vuole accendere' (verbo servile unico) e 'fondere' (infinito).",
+                hintStructure: "Albero a 3 livelli! 'Steve corre verso casa' (Principale) ➔ 'poiché vuole accendere la fornace' (1° grado, causale) ➔ 'per fondere il ferro' (2° grado, finale)."
+            }
+        ];
+
+        /* =========================================================================
+           2. SISTEMA EQUIPAGGIAMENTO E STRUMENTI (ZAINO)
+           ========================================================================= */
+        const TOOLS_TIERS = [
+            { level: 1, name: "Piccone di Legno", icon: "🪵", desc: "Strumento iniziale per principianti della sintassi." },
+            { level: 2, name: "Piccone di Pietra", icon: "🪨", desc: "Più robusto, scava facilmente le subordinate di 1° grado." },
+            { level: 3, name: "Piccone di Ferro", icon: "⚔️", desc: "Affilato per riconoscere coordinate e incisi senza sforzo." },
+            { level: 4, name: "Piccone d'Oro", icon: "🪙", desc: "Veloce ed elegante: ricollega i soggetti staccati in un lampo!" },
+            { level: 5, name: "Piccone di Diamante", icon: "💎", desc: "Rarissimo: domina qualsiasi periodo complesso." },
+            { level: 6, name: "Ascia di Netherite", icon: "🔮", desc: "Il leggendario strumento dei maestri supremi della lingua italiana." }
+        ];
+
+        /* =========================================================================
+           3. STATO DELL'APPLICAZIONE & SALVATAGGIO
+           ========================================================================= */
+        const STORAGE_KEY = "sintassi_craft_v2_save";
+
+        let appState = {
+            currentMode: 'mining',
+            currentIndex: 0,
+            sentenceFilter: 'all', // 'all', 'united', 'split'
+            xp: 0,
+            level: 1,
+            streak: 0,
+            soundEnabled: true,
+            ttsEnabled: true,
+            ttsRate: 0.95,
+            voiceURI: null,
+            fontFamily: 'dyslexic',
+            fontSize: '18px',
+            spacing: 'wide',
+            highContrast: false,
+            userSplits: [],
+            userClassifications: [],
+            treeState: null
+        };
+
+        function loadSavedState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    appState.xp = parsed.xp || 0;
+                    appState.level = parsed.level || 1;
+                    appState.soundEnabled = parsed.soundEnabled ?? true;
+                    appState.ttsEnabled = parsed.ttsEnabled ?? true;
+                    appState.ttsRate = parsed.ttsRate || 0.95;
+                    appState.voiceURI = parsed.voiceURI || null;
+                    appState.fontFamily = parsed.fontFamily || 'dyslexic';
+                    appState.fontSize = parsed.fontSize || '18px';
+                    appState.spacing = parsed.spacing || 'wide';
+                    appState.highContrast = parsed.highContrast || false;
+                }
+            } catch(e) {
+                console.warn("Impossibile caricare il salvataggio:", e);
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    xp: appState.xp,
+                    level: appState.level,
+                    soundEnabled: appState.soundEnabled,
+                    ttsEnabled: appState.ttsEnabled,
+                    ttsRate: appState.ttsRate,
+                    voiceURI: appState.voiceURI,
+                    fontFamily: appState.fontFamily,
+                    fontSize: appState.fontSize,
+                    spacing: appState.spacing,
+                    highContrast: appState.highContrast
+                }));
+            } catch(e) {}
+        }
+
+        /* =========================================================================
+           4. AUDIO SINTETIZZATO RETRO (Tone.js)
+           ========================================================================= */
+        let synth = null;
+        let audioContextStarted = false;
+
+        async function initAudio() {
+            if (!audioContextStarted) {
+                try {
+                    await Tone.start();
+                    synth = new Tone.PolySynth(Tone.Synth).toDestination();
+                    synth.volume.value = -8;
+                    audioContextStarted = true;
+                } catch(e) {
+                    console.log("Audio Web non disponibile");
+                }
+            }
+        }
+
+        function playSound(type) {
+            if (!appState.soundEnabled) return;
+            initAudio();
+            if (!synth) return;
+
+            try {
+                const now = Tone.now();
+                if (type === 'click') {
+                    synth.triggerAttackRelease("C4", "32n", now);
+                } else if (type === 'split') {
+                    synth.triggerAttackRelease(["E4", "B4"], "16n", now);
+                } else if (type === 'correct') {
+                    synth.triggerAttackRelease(["C5", "E5"], "16n", now);
+                    synth.triggerAttackRelease(["G5", "C6"], "16n", now + 0.12);
+                } else if (type === 'wrong') {
+                    synth.triggerAttackRelease(["Eb3", "A2"], "8n", now);
+                } else if (type === 'levelUp') {
+                    synth.triggerAttackRelease("C5", "16n", now);
+                    synth.triggerAttackRelease("E5", "16n", now + 0.1);
+                    synth.triggerAttackRelease("G5", "16n", now + 0.2);
+                    synth.triggerAttackRelease("C6", "4n", now + 0.3);
+                }
+            } catch(e) {}
+        }
+
+        function toggleAudioMute() {
+            appState.soundEnabled = !appState.soundEnabled;
+            document.getElementById('sound-icon').innerText = appState.soundEnabled ? "🎵" : "🔇";
+            saveState();
+        }
+
+        /* =========================================================================
+           5. SINTESI VOCALE (TTS) - VOCE FEMMINILE NATURALE ITALIANA
+           ========================================================================= */
+        let cachedItalianVoices = [];
+        let selectedVoiceURI = null;
+
+        function scoreItalianVoice(voice) {
+            const name = voice.name.toLowerCase();
+            let score = 0;
+
+            // Forte penalità per voci maschili note
+            const maleNames = [
+                'cosimo', 'diego', 'luca', 'giorgio', 'benigno', 'calimero',
+                'cataldo', 'gianni', 'giuseppe', 'lisandro', 'rinaldo', 'marco',
+                'male', 'uomo', 'maschile'
+            ];
+            if (maleNames.some(m => name.includes(m))) {
+                score -= 120;
+            }
+
+            // Forte bonus per voci neurali / naturali / online di alta qualità
+            if (name.includes('natural') || name.includes('neural') || name.includes('online')) {
+                score += 65;
+            }
+            if (name.includes('enhanced') || name.includes('premium') || name.includes('siri')) {
+                score += 55;
+            }
+            // Google italiano su Chrome/Android è una voce femminile molto fluida e naturale
+            if (name.includes('google') && (name.includes('italiano') || voice.lang.toLowerCase().startsWith('it'))) {
+                score += 75;
+            }
+
+            // Bonus per voci femminili italiane note (Windows, Edge, macOS, iOS, Android)
+            const femaleNames = [
+                'isabella', 'elsa', 'federica', 'alice', 'paola', 'silvia',
+                'giulia', 'chiara', 'fabiola', 'fiamma', 'imelda', 'irma',
+                'palmira', 'pierina', 'carla', 'bianca', 'sofia', 'lucia',
+                'elena', 'female', 'donna', 'femminile'
+            ];
+            if (femaleNames.some(f => name.includes(f))) {
+                score += 35;
+            }
+
+            // Preferenza per le voci femminili più calde ed espressive
+            if (name.includes('isabella')) score += 15;
+            if (name.includes('elsa')) score += 10;
+            if (name.includes('federica') || name.includes('alice')) score += 10;
+
+            // Preferenza per italiano standard (it-IT)
+            if (voice.lang.toLowerCase() === 'it-it' || voice.lang.toLowerCase() === 'it_it') {
+                score += 5;
+            }
+
+            return score;
+        }
+
+        function loadItalianVoices() {
+            if (!('speechSynthesis' in window)) return;
+            const allVoices = window.speechSynthesis.getVoices();
+            if (!allVoices || allVoices.length === 0) return;
+
+            cachedItalianVoices = allVoices
+                .filter(v => v.lang && v.lang.toLowerCase().startsWith('it'))
+                .sort((a, b) => scoreItalianVoice(b) - scoreItalianVoice(a));
+
+            const savedVoice = appState.voiceURI && cachedItalianVoices.find(v => v.voiceURI === appState.voiceURI);
+            if (savedVoice) {
+                selectedVoiceURI = savedVoice.voiceURI;
+            } else if (cachedItalianVoices.length > 0) {
+                selectedVoiceURI = cachedItalianVoices[0].voiceURI;
+            }
+
+            populateVoiceSelector();
+        }
+
+        function populateVoiceSelector() {
+            const select = document.getElementById('select-tts-voice');
+            if (!select) return;
+
+            if (cachedItalianVoices.length === 0) {
+                select.innerHTML = '<option value="">Voce predefinita italiana</option>';
+                return;
+            }
+
+            select.innerHTML = cachedItalianVoices.map((v, idx) => {
+                const label = idx === 0 ? `⭐ ${v.name} (Consigliata)` : v.name;
+                const selected = v.voiceURI === selectedVoiceURI ? 'selected' : '';
+                return `<option value="${v.voiceURI.replace(/"/g, '&quot;')}" ${selected}>${label}</option>`;
+            }).join('');
+        }
+
+        function updateTTSVoice(voiceURI) {
+            selectedVoiceURI = voiceURI;
+            appState.voiceURI = voiceURI;
+            saveState();
+            speakText("Ciao! Questa è la mia voce per guidarti nell'analisi del periodo.");
+        }
+
+        function cleanTextForSpeech(text) {
+            // Rimuove emoji e simboli così la lettura risulta naturale e scorrevole
+            return text
+                .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}\uFE0F]/gu, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return;
+            const cleaned = cleanTextForSpeech(text);
+            if (!cleaned) return;
+
+            window.speechSynthesis.cancel();
+
+            if (cachedItalianVoices.length === 0) {
+                loadItalianVoices();
+            }
+
+            const utterance = new SpeechSynthesisUtterance(cleaned);
+            utterance.lang = 'it-IT';
+            utterance.rate = appState.ttsRate;
+            utterance.pitch = 1.02;
+
+            const voice = cachedItalianVoices.find(v => v.voiceURI === selectedVoiceURI) || cachedItalianVoices[0];
+            if (voice) {
+                utterance.voice = voice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = loadItalianVoices;
+        }
+
+        function toggleSpeechAssist() {
+            appState.ttsEnabled = !appState.ttsEnabled;
+            const btn = document.getElementById('btn-tts-toggle');
+            const icon = document.getElementById('tts-icon');
+            if (appState.ttsEnabled) {
+                icon.innerText = "🔊";
+                btn.classList.replace('bg-stone-500', 'bg-mc-gold');
+                speakText("Assistente vocale attivato!");
+            } else {
+                icon.innerText = "🔇";
+                btn.classList.replace('bg-mc-gold', 'bg-stone-500');
+                window.speechSynthesis.cancel();
+            }
+            saveState();
+        }
+
+        /* =========================================================================
+           6. NAVIGAZIONE, FILTRO FRASI E INIZIALIZZAZIONE SESSIONE
+           ========================================================================= */
+        function getFilteredIndices() {
+            const indices = [];
+            SENTENCE_DATABASE.forEach((item, idx) => {
+                if (appState.sentenceFilter === 'all') {
+                    indices.push(idx);
+                } else if (appState.sentenceFilter === 'split' && item.hasSplit) {
+                    indices.push(idx);
+                } else if (appState.sentenceFilter === 'united' && !item.hasSplit) {
+                    indices.push(idx);
+                }
+            });
+            return indices.length > 0 ? indices : SENTENCE_DATABASE.map((_, idx) => idx);
+        }
+
+        function setSentenceFilter(filter) {
+            playSound('click');
+            appState.sentenceFilter = filter;
+            updateFilterButtonsUI();
+
+            const validIndices = getFilteredIndices();
+            if (!validIndices.includes(appState.currentIndex)) {
+                appState.currentIndex = validIndices[0];
+            }
+            loadQuestion();
+        }
+
+        function updateFilterButtonsUI() {
+            const filters = ['all', 'united', 'split'];
+            filters.forEach(f => {
+                const btn = document.getElementById(`filter-btn-${f}`);
+                if (!btn) return;
+                if (appState.sentenceFilter === f) {
+                    btn.classList.remove('bg-stone-700', 'text-white');
+                    btn.classList.add('bg-mc-gold', 'text-black');
+                } else {
+                    btn.classList.remove('bg-mc-gold', 'text-black');
+                    btn.classList.add('bg-stone-700', 'text-white');
+                }
+            });
+        }
+
+        function startMode(mode, keepCurrentSentence = false) {
+            playSound('click');
+            appState.currentMode = mode;
+
+            if (!keepCurrentSentence) {
+                const validIndices = getFilteredIndices();
+                appState.currentIndex = validIndices[Math.floor(Math.random() * validIndices.length)];
+            }
+
+            document.getElementById('biome-select-screen').classList.add('hidden');
+            document.getElementById('game-workspace').classList.remove('hidden');
+
+            const badge = document.getElementById('current-mode-badge');
+            if (mode === 'mining') {
+                badge.innerText = "⛏️ MINIERA FRASI";
+                badge.className = "font-pixel text-xs text-white px-3 py-1 bg-mc-grass rounded border border-green-800";
+            } else if (mode === 'crafting') {
+                badge.innerText = "🛠️ CRAFTING PERIODI";
+                badge.className = "font-pixel text-xs text-black px-3 py-1 bg-mc-gold rounded border border-yellow-800";
+            } else if (mode === 'fortress') {
+                badge.innerText = "🏰 FORTEZZA SINTATTICA";
+                badge.className = "font-pixel text-xs text-black px-3 py-1 bg-mc-diamond rounded border border-cyan-800";
+            } else if (mode === 'tree') {
+                badge.innerText = "🌳 GRAFICO AD ALBERO";
+                badge.className = "font-pixel text-xs text-white px-3 py-1 bg-purple-700 rounded border border-purple-900";
+            }
+
+            updateFilterButtonsUI();
+            loadQuestion();
+        }
+
+        function openGuidedTreeForCurrent() {
+            startMode('tree', true);
+        }
+
+        function returnToMenu() {
+            playSound('click');
+            window.speechSynthesis.cancel();
+            document.getElementById('biome-select-screen').classList.remove('hidden');
+            document.getElementById('game-workspace').classList.add('hidden');
+        }
+
+        function getRandomSentence() {
+            playSound('click');
+            const validIndices = getFilteredIndices();
+            let nextIndex = appState.currentIndex;
+            if (validIndices.length > 1) {
+                do {
+                    nextIndex = validIndices[Math.floor(Math.random() * validIndices.length)];
+                } while (nextIndex === appState.currentIndex);
+            } else {
+                nextIndex = validIndices[0];
+            }
+            
+            appState.currentIndex = nextIndex;
+            loadQuestion();
+            showFeedback(true, "🎲 Nuova frase caricata!", "Esplora questo nuovo periodo con cura.");
+        }
+
+        function loadQuestion() {
+            const currentData = SENTENCE_DATABASE[appState.currentIndex];
+            const validIndices = getFilteredIndices();
+            const posInFilter = validIndices.indexOf(appState.currentIndex);
+            document.getElementById('question-tracker').innerText = `Frase ${posInFilter >= 0 ? posInFilter + 1 : 1}/${validIndices.length}`;
+            
+            hideFeedback();
+            document.getElementById('syntax-tree-container').classList.add('hidden');
+
+            // Visualizzazione testo
+            const displayArea = document.getElementById('sentence-display-area');
+            displayArea.innerText = currentData.fullText;
+
+            // Badge tipo struttura principale (Soggetto Unito vs Separato)
+            const structureBadge = document.getElementById('structure-type-badge');
+            if (currentData.hasSplit) {
+                structureBadge.innerText = "🔗 Soggetto separato (inciso)";
+                structureBadge.className = "text-xs font-bold bg-cyan-200 text-cyan-950 px-2 py-0.5 rounded border border-cyan-500";
+            } else {
+                structureBadge.innerText = "➡️ Soggetto unito alla principale";
+                structureBadge.className = "text-xs font-bold bg-emerald-200 text-emerald-950 px-2 py-0.5 rounded border border-emerald-500";
+            }
+
+            // Badge conteggio verbi
+            const verbsCount = currentData.verbs.length;
+            const verbBadge = document.getElementById('verbs-count-badge');
+            verbBadge.innerText = `🔍 ${verbsCount} ${verbsCount === 1 ? 'verbo' : 'verbi'} = ${verbsCount} proposizioni`;
+
+            // Adatta i pulsanti in fondo in base alla modalità
+            const btnCheck = document.getElementById('btn-check-action');
+            const btnToggleTree = document.getElementById('btn-toggle-tree');
+            if (appState.currentMode === 'tree') {
+                btnCheck.innerText = "🔄 RICOMINCIA ALBERO";
+                btnCheck.className = "pixel-btn bg-stone-700 text-white font-pixel text-xs px-5 py-3 rounded hover:brightness-110";
+                btnToggleTree.classList.add('hidden');
+            } else {
+                btnCheck.innerText = "VERIFICA CRAFTING ✔️";
+                btnCheck.className = "pixel-btn bg-mc-emerald text-white font-pixel text-xs px-6 py-3 rounded hover:brightness-110";
+                btnToggleTree.classList.remove('hidden');
+            }
+
+            document.getElementById('villager-hint-text').innerText = "Riconosci le diverse parti del periodo. Clicca sui blocchi per risolvere la sfida!";
+
+            const zone = document.getElementById('interaction-zone');
+            zone.innerHTML = "";
+
+            if (appState.currentMode === 'mining') {
+                renderMiningMode(currentData);
+            } else if (appState.currentMode === 'crafting') {
+                renderCraftingMode(currentData);
+            } else if (appState.currentMode === 'fortress') {
+                renderFortressMode(currentData);
+            } else if (appState.currentMode === 'tree') {
+                renderTreeBuilderMode(currentData);
+            }
+
+            if (appState.ttsEnabled) {
+                if (appState.currentMode === 'tree') {
+                    speakText("Costruiamo insieme il grafico ad albero per la frase: " + currentData.fullText);
+                } else {
+                    speakText("Nuova frase da analizzare: " + currentData.fullText);
+                }
+            }
+        }
+
+        function readCurrentSentence() {
+            const currentData = SENTENCE_DATABASE[appState.currentIndex];
+            const textToRead = currentData ? currentData.fullText : document.getElementById('sentence-display-area').innerText;
+            speakText(textToRead);
+        }
+
+        /* =========================================================================
+           7. MODALITÀ 1: MINIERA FRASI (DIVISIONE ACCURATA)
+           ========================================================================= */
+        function renderMiningMode(data) {
+            appState.userSplits = [];
+            const zone = document.getElementById('interaction-zone');
+
+            let html = `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-bold text-stone-800">
+                            ⛏️ Fai click sulla parola <strong>DOPO LA QUALE</strong> vuoi posizionare il Blocco Separatore 🧱:
+                        </p>
+                        <span class="text-xs bg-stone-300 px-2 py-1 rounded font-mono font-bold" id="split-counter-badge">0 / ${data.targetSplits.length} stacchi</span>
+                    </div>
+                    
+                    <div id="word-chips-container" class="flex flex-wrap gap-2.5 p-4 bg-stone-200 border-2 border-stone-400 rounded-lg min-h-[110px] items-center">
+            `;
+
+            const words = data.fullText.split(" ");
+            words.forEach((word, idx) => {
+                html += `
+                    <button onclick="toggleWordSplit(${idx})" id="word-btn-${idx}" class="group relative px-3 py-2 bg-white hover:bg-stone-50 border-2 border-stone-700 rounded text-base font-medium shadow-sm transition-all flex items-center gap-1.5 focus:outline-none">
+                        <span>${word}</span>
+                        <span id="split-mark-${idx}" class="hidden text-[10px] bg-mc-redstone text-white px-1.5 py-0.5 rounded font-pixel shadow">🧱 STACCO</span>
+                    </button>
+                `;
+            });
+
+            html += `
+                    </div>
+                    <div class="text-xs text-stone-600 bg-stone-200 p-3 rounded border border-stone-400 leading-relaxed">
+                        💡 <strong>Consiglio del minatore:</strong> Quando c'è un inciso (es. <em>"Steve, esplorando la caverna, trovò un diamante"</em>), separa sia all'inizio sia alla fine dell'inciso per isolarlo dal soggetto e dal predicato!
+                    </div>
+                </div>
+            `;
+
+            zone.innerHTML = html;
+        }
+
+        function toggleWordSplit(index) {
+            playSound('split');
+            const mark = document.getElementById(`split-mark-${index}`);
+            const btn = document.getElementById(`word-btn-${index}`);
+
+            const foundIdx = appState.userSplits.indexOf(index);
+            if (foundIdx > -1) {
+                appState.userSplits.splice(foundIdx, 1);
+                mark.classList.add('hidden');
+                btn.classList.remove('border-mc-redstone', 'bg-red-50', 'ring-2', 'ring-mc-redstone');
+            } else {
+                appState.userSplits.push(index);
+                mark.classList.remove('hidden');
+                btn.classList.add('border-mc-redstone', 'bg-red-50', 'ring-2', 'ring-mc-redstone');
+            }
+
+            const currentData = SENTENCE_DATABASE[appState.currentIndex];
+            const badge = document.getElementById('split-counter-badge');
+            if (badge && currentData) {
+                badge.innerText = `${appState.userSplits.length} / ${currentData.targetSplits.length} stacchi`;
+            }
+        }
+
+        /* =========================================================================
+           8. MODALITÀ 2: BANCO DA CRAFTING (CLASSIFICAZIONE & INCISO)
+           ========================================================================= */
+        function renderCraftingMode(data) {
+            appState.userClassifications = new Array(data.clauses.length).fill(null);
+            const zone = document.getElementById('interaction-zone');
+
+            let html = `
+                <div class="space-y-4">
+                    <p class="text-sm font-bold text-stone-800">
+                        🛠️ Scegli per ogni blocco estratto il minerale corretto:
+                    </p>
+                    <div class="space-y-3">
+            `;
+
+            data.clauses.forEach((clause, idx) => {
+                const isSplitPart = clause.totalParts && clause.totalParts > 1;
+                const splitBadge = isSplitPart 
+                    ? `<span class="bg-amber-100 text-amber-900 border border-amber-500 text-[11px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1">🔗 Parte ${clause.part} di ${clause.totalParts} (Spezzata dall'inciso)</span>` 
+                    : '';
+
+                html += `
+                    <div class="pixel-box bg-white p-4 rounded-lg space-y-3 ${isSplitPart ? 'border-l-8 border-mc-diamond bg-cyan-50/50' : ''}">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200 pb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-pixel text-[11px] bg-stone-800 text-yellow-300 px-2 py-1 rounded">Blocco ${idx + 1}</span>
+                                <span class="text-base font-semibold text-stone-900">"${clause.text}"</span>
+                                <button onclick="speakText('${clause.text.replace(/'/g, "\\'")}')" class="text-xs bg-stone-200 p-1 rounded hover:bg-stone-300 font-bold" title="Ascolta">🔊</button>
+                            </div>
+                            ${splitBadge}
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+                            <button onclick="selectCraftType(${idx}, 'principale', this)" class="craft-option-${idx} pixel-btn bg-stone-100 hover:bg-mc-diamond/30 p-2.5 rounded text-left border border-stone-400">
+                                <div class="font-bold text-xs text-stone-800">💎 Principale (1)</div>
+                                <div class="text-[11px] text-stone-500">${isSplitPart ? 'Parte della principale' : 'Autonoma, regge il senso'}</div>
+                            </button>
+                            
+                            <button onclick="selectCraftType(${idx}, 'coordinata', this)" class="craft-option-${idx} pixel-btn bg-stone-100 hover:bg-mc-gold/30 p-2.5 rounded text-left border border-stone-400">
+                                <div class="font-bold text-xs text-stone-800">🪙 Coordinata (2)</div>
+                                <div class="text-[11px] text-stone-500">Unita con 'e, ma, però...'</div>
+                            </button>
+
+                            <button onclick="selectCraftType(${idx}, 'subordinata', this)" class="craft-option-${idx} pixel-btn bg-stone-100 hover:bg-mc-emerald/30 p-2.5 rounded text-left border border-stone-400">
+                                <div class="font-bold text-xs text-stone-800">🟢 Subordinata (3)</div>
+                                <div class="text-[11px] text-stone-500">Dipende da un'altra frase</div>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (data.hasSplit) {
+                html += `
+                    <div class="p-3 bg-amber-100 border-2 border-amber-500 rounded-lg text-xs text-amber-900 space-y-1">
+                        <div class="font-bold text-sm flex items-center gap-1">🧩 Suggerimento per le frasi spezzate:</div>
+                        <p>In questo periodo il soggetto è separato dal predicato. Ricorda che <strong>entrambi i pezzi</strong> formano la <strong>💎 Proposizione Principale</strong> e vanno classificati entrambi come tali!</p>
+                    </div>
+                `;
+            }
+
+            html += `</div></div>`;
+            zone.innerHTML = html;
+        }
+
+        function selectCraftType(clauseIdx, type, btnElement) {
+            playSound('click');
+            appState.userClassifications[clauseIdx] = type;
+
+            const buttons = document.querySelectorAll(`.craft-option-${clauseIdx}`);
+            buttons.forEach(b => {
+                b.classList.remove('ring-4', 'ring-black', 'bg-mc-diamond', 'bg-mc-gold', 'bg-mc-emerald');
+                b.classList.add('bg-stone-100');
+            });
+
+            btnElement.classList.remove('bg-stone-100');
+            btnElement.classList.add('ring-4', 'ring-black');
+            if (type === 'principale') btnElement.classList.add('bg-mc-diamond');
+            if (type === 'coordinata') btnElement.classList.add('bg-mc-gold');
+            if (type === 'subordinata') btnElement.classList.add('bg-mc-emerald');
+        }
+
+        /* =========================================================================
+           9. MODALITÀ 3: FORTEZZA SINTATTICA (GRADO, FORMA, FUNZIONE)
+           ========================================================================= */
+        function renderFortressMode(data) {
+            appState.userClassifications = data.clauses.map(() => ({
+                kind: null,
+                form: null
+            }));
+
+            const zone = document.getElementById('interaction-zone');
+
+            let html = `
+                <div class="space-y-4">
+                    <p class="text-sm font-bold text-stone-800">
+                        🏰 Analisi Approfondita: Determina la funzione logica e la forma verbale di ciascuna proposizione.
+                    </p>
+                    <div class="space-y-3">
+            `;
+
+            data.clauses.forEach((clause, idx) => {
+                const isSplit = clause.totalParts && clause.totalParts > 1;
+                html += `
+                    <div class="pixel-box bg-white p-4 rounded-lg space-y-3 ${isSplit ? 'border-l-8 border-mc-diamond bg-cyan-50/50' : ''}">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-pixel text-[11px] bg-mc-woodDark text-yellow-300 px-2 py-1 rounded">Blocco ${idx + 1}</span>
+                                <span class="text-base font-bold text-stone-900">"${clause.text}"</span>
+                            </div>
+                            ${isSplit ? `<span class="text-xs font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded border border-amber-500">🔗 Parte ${clause.part} di ${clause.totalParts} (Spezzata)</span>` : ''}
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            <div class="space-y-1">
+                                <label class="font-bold text-stone-700 block">Tipo / Funzione Logica:</label>
+                                <select onchange="updateFortressChoice(${idx}, 'kind', this.value)" class="w-full p-2 bg-stone-100 border-2 border-stone-800 rounded font-medium focus:bg-yellow-50">
+                                    <option value="">-- Seleziona Funzione --</option>
+                                    <option value="indipendente">Principale / Indipendente</option>
+                                    <option value="copulativa">Coordinata (e, ed, ma, oppure...)</option>
+                                    <option value="temporale">Subordinata Temporale (quando, mentre, dopo...)</option>
+                                    <option value="causale">Subordinata Causale (perché, poiché, per via di...)</option>
+                                    <option value="finale">Subordinata Finale (per, affinché...)</option>
+                                    <option value="relativa">Subordinata Relativa (introdotta da 'che', 'il quale')</option>
+                                    <option value="oggettiva">Subordinata Oggettiva (fa da complemento oggetto)</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="font-bold text-stone-700 block">Forma Verbale:</label>
+                                <select onchange="updateFortressChoice(${idx}, 'form', this.value)" class="w-full p-2 bg-stone-100 border-2 border-stone-800 rounded font-medium focus:bg-yellow-50">
+                                    <option value="">-- Seleziona Forma --</option>
+                                    <option value="esplicita">Esplicita (Verbo finito: indicativo, congiuntivo...)</option>
+                                    <option value="implicita">Implicita (Verbo indefinito: gerundio, infinito, participio)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            zone.innerHTML = html;
+        }
+
+        function updateFortressChoice(clauseIdx, field, value) {
+            playSound('click');
+            if (appState.userClassifications[clauseIdx]) {
+                appState.userClassifications[clauseIdx][field] = value;
+            }
+        }
+
+        /* =========================================================================
+           9B. MODALITÀ 4: COSTRUZIONE GUIDATA DEL GRAFICO AD ALBERO
+           ========================================================================= */
+        function buildTreeSteps(data) {
+            const steps = [];
+            const mainIdx = [];
+            const coordIdx = [];
+            const sub1Idx = [];
+            const sub2Idx = [];
+
+            data.clauses.forEach((c, idx) => {
+                if (c.type === 'principale') mainIdx.push(idx);
+                else if (c.type === 'coordinata') coordIdx.push(idx);
+                else if (c.type === 'subordinata' && c.grade === 2) sub2Idx.push(idx);
+                else if (c.type === 'subordinata') sub1Idx.push(idx);
+            });
+
+            steps.push({
+                id: 'principale',
+                label: '💎 Principale (Liv. 0)',
+                clauseIndices: mainIdx,
+                instruction: data.hasSplit
+                    ? "PASSO 1 — In questa frase il soggetto è SEPARATO dal predicato da un inciso. Clicca ENTRAMBE le parti della Proposizione Principale per unirle in cima all'albero!"
+                    : "PASSO 1 — In questa frase il soggetto è UNITO alla principale. Clicca il blocco autonomo che regge l'intero periodo per metterlo in cima all'albero!"
+            });
+
+            if (coordIdx.length > 0) {
+                steps.push({
+                    id: 'coordinata',
+                    label: '🪙 Coordinata (Liv. 0)',
+                    clauseIndices: coordIdx,
+                    instruction: `PASSO ${steps.length + 1} — Ora trova la Proposizione Coordinata (introdotta da 'e, ed, ma...') e cliccala per affiancarla sullo stesso piano della principale!`
+                });
+            }
+
+            if (sub1Idx.length > 0) {
+                steps.push({
+                    id: 'sub1',
+                    label: '🟢 Subordinata 1° grado',
+                    clauseIndices: sub1Idx,
+                    instruction: `PASSO ${steps.length + 1} — Scendi di un livello! Clicca la Subordinata di 1° grado per agganciarla sotto la proposizione da cui dipende!`
+                });
+            }
+
+            if (sub2Idx.length > 0) {
+                steps.push({
+                    id: 'sub2',
+                    label: '🟣 Subordinata 2° grado',
+                    clauseIndices: sub2Idx,
+                    instruction: `PASSO ${steps.length + 1} — Ultimo ramo! Clicca la Subordinata di 2° grado per collegarla sotto la subordinata di 1° grado!`
+                });
+            }
+
+            return steps;
+        }
+
+        function renderTreeBuilderMode(data) {
+            const indices = data.clauses.map((_, i) => i);
+            // Mescola i blocchi così lo studente ragiona sulla struttura invece di cliccare in ordine
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+
+            appState.treeState = {
+                steps: buildTreeSteps(data),
+                currentStepIdx: 0,
+                placedIndices: [],
+                shuffledOrder: indices,
+                completed: false
+            };
+
+            renderTreeBuilderUI();
+        }
+
+        function resetTreeBuilder() {
+            playSound('click');
+            hideFeedback();
+            const data = SENTENCE_DATABASE[appState.currentIndex];
+            renderTreeBuilderMode(data);
+        }
+
+        function renderTreeBuilderUI() {
+            const data = SENTENCE_DATABASE[appState.currentIndex];
+            const state = appState.treeState;
+            const zone = document.getElementById('interaction-zone');
+            if (!state) return;
+
+            const activeStep = state.steps[state.currentStepIdx];
+            if (!state.completed && activeStep) {
+                document.getElementById('villager-hint-text').innerText = activeStep.instruction;
+            }
+
+            // 1. Barra guidata dei passi (Stepper)
+            let html = `<div class="space-y-5">`;
+            html += `<div class="flex flex-wrap items-center justify-center gap-2">`;
+            state.steps.forEach((step, idx) => {
+                const isDone = idx < state.currentStepIdx || state.completed;
+                const isActive = idx === state.currentStepIdx && !state.completed;
+                let pillClass = 'tree-step-pill bg-stone-200 text-stone-600 border-stone-400';
+                if (isDone) pillClass = 'bg-mc-emerald text-white border-green-800';
+                else if (isActive) pillClass = 'tree-step-pill-active bg-mc-gold text-black border-amber-800 ring-2 ring-black';
+
+                html += `
+                    <div class="px-3 py-1.5 rounded-full border-2 text-xs font-bold flex items-center gap-1.5 ${pillClass}">
+                        <span>${isDone ? '✔️' : (idx + 1) + '.'}</span>
+                        <span>${step.label}</span>
+                    </div>
+                `;
+                if (idx < state.steps.length - 1) {
+                    html += `<span class="text-stone-500 font-bold">➔</span>`;
+                }
+            });
+            html += `</div>`;
+
+            // 2. Cantiere Visivo del Grafico ad Albero (Live Blueprint)
+            const mainClauses = data.clauses.map((c, idx) => ({ ...c, idx })).filter(c => c.type === 'principale');
+            const coordClauses = data.clauses.map((c, idx) => ({ ...c, idx })).filter(c => c.type === 'coordinata');
+            const sub1Clauses = data.clauses.map((c, idx) => ({ ...c, idx })).filter(c => c.type === 'subordinata' && c.grade !== 2);
+            const sub2Clauses = data.clauses.map((c, idx) => ({ ...c, idx })).filter(c => c.type === 'subordinata' && c.grade === 2);
+
+            const placedMains = mainClauses.filter(c => state.placedIndices.includes(c.idx));
+            const allMainsPlaced = placedMains.length === mainClauses.length;
+
+            html += `
+                <div class="tree-blueprint-box p-5 bg-white border-4 border-stone-800 rounded-lg space-y-4 shadow-inner">
+                    <div class="text-center font-pixel text-[11px] text-stone-600 uppercase tracking-wider">
+                        🌳 CANTIERE DEL GRAFICO AD ALBERO
+                    </div>
+
+                    <!-- LIVELLO 0: PRINCIPALE + EVENTUALI COORDINATE AFFIANCATE -->
+                    <div class="flex flex-wrap items-center justify-center gap-3">
+            `;
+
+            // Blocco Principale (Livello 0)
+            if (allMainsPlaced) {
+                const mainText = mainClauses.map(m => m.text).join(" ... ");
+                const splitTag = data.hasSplit ? "🔗 Soggetto separato ricollegato" : "➡️ Soggetto unito";
+                html += `
+                    <div class="tree-node-placed pixel-box bg-cyan-100 border-2 border-mc-diamondDark p-3 rounded-lg shadow text-center max-w-md">
+                        <span class="font-pixel text-[9px] text-cyan-950 bg-mc-diamond px-2 py-0.5 rounded font-bold">💎 PRINCIPALE (Livello 0)</span>
+                        <div class="text-sm font-bold text-cyan-950 mt-1.5">"${mainText}"</div>
+                        <div class="text-[11px] text-cyan-800 font-semibold mt-1">${splitTag}</div>
+                    </div>
+                `;
+            } else if (data.hasSplit && placedMains.length > 0) {
+                const part1 = placedMains.find(m => m.part === 1);
+                const part2 = placedMains.find(m => m.part === 2);
+                html += `
+                    <div class="tree-slot-empty p-3 bg-cyan-50 border-2 border-dashed border-mc-diamondDark rounded-lg text-center max-w-md space-y-1">
+                        <span class="font-pixel text-[9px] text-cyan-900 bg-mc-diamond/60 px-2 py-0.5 rounded font-bold">💎 PRINCIPALE SPEZZATA (1 di 2 trovata!)</span>
+                        <div class="text-xs font-bold text-cyan-950 mt-1">
+                            ${part1 ? `"${part1.text}"` : '[ ❓ Soggetto ]'} <span class="text-amber-700">... 🔗 ...</span> ${part2 ? `"${part2.text}"` : '[ ❓ Predicato ]'}
+                        </div>
+                    </div>
+                `;
+            } else {
+                const isMainStep = activeStep && activeStep.id === 'principale';
+                html += `
+                    <div class="tree-slot-empty p-4 bg-cyan-50/70 border-2 border-dashed ${isMainStep ? 'border-mc-diamondDark glow-active' : 'border-stone-400'} rounded-lg text-center max-w-md">
+                        <div class="font-pixel text-[10px] text-cyan-900">💎 LIVELLO 0: PRINCIPALE</div>
+                        <div class="text-xs text-stone-600 mt-1">${data.hasSplit ? 'Seleziona entrambe le parti della principale qui sotto' : 'Seleziona la proposizione principale qui sotto'}</div>
+                    </div>
+                `;
+            }
+
+            // Blocchi Coordinate (Livello 0, affiancati con ponte orizzontale)
+            if (coordClauses.length > 0) {
+                html += `<div class="font-bold text-amber-700 text-sm px-1">━━ ↔️ ━━</div>`;
+                coordClauses.forEach(coord => {
+                    const isPlaced = state.placedIndices.includes(coord.idx);
+                    if (isPlaced) {
+                        html += `
+                            <div class="tree-node-placed pixel-box bg-yellow-100 border-2 border-mc-goldDark p-3 rounded-lg shadow text-center max-w-xs">
+                                <span class="font-pixel text-[9px] text-amber-950 bg-mc-gold px-2 py-0.5 rounded font-bold">🪙 COORDINATA (Livello 0)</span>
+                                <div class="text-sm font-bold text-amber-950 mt-1.5">"${coord.text}"</div>
+                                <div class="text-[11px] text-amber-800 italic mt-0.5">Stesso piano della principale</div>
+                            </div>
+                        `;
+                    } else {
+                        const isCoordStep = activeStep && activeStep.id === 'coordinata';
+                        html += `
+                            <div class="tree-slot-empty p-3 bg-yellow-50/70 border-2 border-dashed ${isCoordStep ? 'border-mc-goldDark glow-active' : 'border-stone-400 opacity-60'} rounded-lg text-center max-w-xs">
+                                <div class="font-pixel text-[9px] text-amber-900">🪙 COORDINATA</div>
+                                <div class="text-xs text-stone-600 mt-1">${isCoordStep ? 'Clicca la coordinata qui sotto!' : 'In attesa del Passo 2...'}</div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            html += `</div>`; // Chiude Livello 0
+
+            // LIVELLO 1: SUBORDINATE DI 1° GRADO
+            if (sub1Clauses.length > 0) {
+                const isSub1Step = activeStep && activeStep.id === 'sub1';
+                html += `
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="text-xs font-bold text-emerald-800 flex items-center gap-1">
+                            <span>⬇️ subordinazione (1° grado)</span>
+                        </div>
+                        <div class="flex flex-wrap justify-center gap-3">
+                `;
+                sub1Clauses.forEach(sub => {
+                    const isPlaced = state.placedIndices.includes(sub.idx);
+                    if (isPlaced) {
+                        html += `
+                            <div class="tree-node-placed pixel-box bg-emerald-100 border-2 border-mc-emeraldDark p-3 rounded-lg shadow text-center max-w-xs">
+                                <span class="font-pixel text-[9px] text-white bg-mc-emerald px-2 py-0.5 rounded font-bold">🟢 SUBORDINATA 1° GRADO</span>
+                                <div class="text-sm font-bold text-emerald-950 mt-1.5">"${sub.text}"</div>
+                                <div class="text-[11px] text-emerald-800 italic mt-0.5">${sub.typeName} • ${sub.form}</div>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="tree-slot-empty p-3 bg-emerald-50/70 border-2 border-dashed ${isSub1Step ? 'border-mc-emeraldDark glow-active' : 'border-stone-400 opacity-60'} rounded-lg text-center max-w-xs">
+                                <div class="font-pixel text-[9px] text-emerald-900">🟢 SUBORDINATA 1° GRADO</div>
+                                <div class="text-xs text-stone-600 mt-1">${isSub1Step ? 'Clicca la subordinata di 1° grado qui sotto!' : 'In attesa del livello precedente...'}</div>
+                            </div>
+                        `;
+                    }
+                });
+                html += `</div></div>`;
+            }
+
+            // LIVELLO 2: SUBORDINATE DI 2° GRADO
+            if (sub2Clauses.length > 0) {
+                const isSub2Step = activeStep && activeStep.id === 'sub2';
+                html += `
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="text-xs font-bold text-purple-800 flex items-center gap-1">
+                            <span>⬇️ subordinazione (2° grado — dipende dalla sub. di 1° grado)</span>
+                        </div>
+                        <div class="flex flex-wrap justify-center gap-3">
+                `;
+                sub2Clauses.forEach(sub => {
+                    const isPlaced = state.placedIndices.includes(sub.idx);
+                    if (isPlaced) {
+                        html += `
+                            <div class="tree-node-placed pixel-box bg-purple-100 border-2 border-purple-700 p-3 rounded-lg shadow text-center max-w-xs">
+                                <span class="font-pixel text-[9px] text-white bg-purple-700 px-2 py-0.5 rounded font-bold">🟣 SUBORDINATA 2° GRADO</span>
+                                <div class="text-sm font-bold text-purple-950 mt-1.5">"${sub.text}"</div>
+                                <div class="text-[11px] text-purple-800 italic mt-0.5">${sub.typeName} • ${sub.form}</div>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="tree-slot-empty p-3 bg-purple-50/70 border-2 border-dashed ${isSub2Step ? 'border-purple-700 glow-active' : 'border-stone-400 opacity-60'} rounded-lg text-center max-w-xs">
+                                <div class="font-pixel text-[9px] text-purple-900">🟣 SUBORDINATA 2° GRADO</div>
+                                <div class="text-xs text-stone-600 mt-1">${isSub2Step ? 'Clicca la subordinata di 2° grado qui sotto!' : 'In attesa del 1° grado...'}</div>
+                            </div>
+                        `;
+                    }
+                });
+                html += `</div></div>`;
+            }
+
+            html += `</div>`; // Chiude Cantiere Albero
+
+            // 3. Magazzino Blocchi da Posizionare (oppure pulsante Prossima Frase se completato)
+            if (!state.completed) {
+                const remaining = state.shuffledOrder.filter(idx => !state.placedIndices.includes(idx));
+                html += `
+                    <div class="space-y-3">
+                        <div class="text-xs font-bold text-stone-800 flex items-center justify-between">
+                            <span>📦 SCEGLI IL BLOCCO GIUSTO PER IL PASSO CORRENTE:</span>
+                            <span class="font-mono bg-stone-300 px-2 py-0.5 rounded">${state.placedIndices.length}/${data.clauses.length} piazzati</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                `;
+                remaining.forEach(clauseIdx => {
+                    const clause = data.clauses[clauseIdx];
+                    html += `
+                        <button onclick="handleTreeBlockClick(${clauseIdx})" class="tree-bank-btn pixel-btn bg-white hover:bg-yellow-50 p-3.5 rounded-lg text-left border-2 border-stone-800 flex items-center justify-between gap-2">
+                            <span class="text-sm font-semibold text-stone-900">"${clause.text}"</span>
+                            <span class="text-xs bg-stone-200 text-stone-800 px-2 py-0.5 rounded font-bold shrink-0">Piazza ⬆️</span>
+                        </button>
+                    `;
+                });
+                html += `</div></div>`;
+            } else {
+                html += `
+                    <div class="flex flex-wrap justify-center gap-3 pt-2">
+                        <button onclick="nextQuestionAuto()" class="pixel-btn bg-mc-emerald text-white font-pixel text-xs px-6 py-3 rounded hover:brightness-110">
+                            ➡️ PROSSIMA FRASE
+                        </button>
+                    </div>
+                `;
+            }
+
+            html += `</div>`;
+            zone.innerHTML = html;
+        }
+
+        function handleTreeBlockClick(clauseIdx) {
+            const data = SENTENCE_DATABASE[appState.currentIndex];
+            const state = appState.treeState;
+            if (!state || state.completed) return;
+
+            const activeStep = state.steps[state.currentStepIdx];
+            const clickedClause = data.clauses[clauseIdx];
+
+            if (activeStep.clauseIndices.includes(clauseIdx)) {
+                state.placedIndices.push(clauseIdx);
+                const allInStepPlaced = activeStep.clauseIndices.every(i => state.placedIndices.includes(i));
+
+                if (!allInStepPlaced) {
+                    playSound('split');
+                    showFeedback(true, "Ottimo! Prima parte agganciata 🔗", `Hai trovato "${clickedClause.text}". Ora clicca l'altra parte della Proposizione Principale per ricomporla!`);
+                    renderTreeBuilderUI();
+                    return;
+                }
+
+                // Passo completato!
+                state.currentStepIdx++;
+                if (state.currentStepIdx >= state.steps.length) {
+                    state.completed = true;
+                    playSound('correct');
+                    handleCorrectAnswer(130, "🌳 ARCHITETTO DEL PERIODO", "Hai costruito l'intero grafico ad albero!");
+                    const structNote = data.hasSplit
+                        ? "Hai ricollegato la principale spezzata dall'inciso e disposto tutti i gradi gerarchici."
+                        : "Hai posizionato la principale col soggetto unito e collegato ogni ramo nel livello corretto.";
+                    document.getElementById('villager-hint-text').innerText = "Fantastico! Il tuo grafico ad albero è completo e perfetto!";
+                    showFeedback(true, "ALBERO COMPLETATO! 🌳✨", structNote);
+                    renderTreeBuilderUI();
+                } else {
+                    playSound('split');
+                    const nextStep = state.steps[state.currentStepIdx];
+                    showFeedback(true, "Passo completato! ✔️", nextStep.instruction);
+                    renderTreeBuilderUI();
+                }
+            } else {
+                playSound('wrong');
+                resetStreak();
+
+                let reason = `"${clickedClause.text}" non va in questo livello dell'albero.`;
+                if (activeStep.id === 'principale') {
+                    if (clickedClause.type === 'subordinata') {
+                        reason = `"${clickedClause.text}" è una subordinata (${clickedClause.typeName}): dipende da un'altra frase e quindi non può stare in cima all'albero!`;
+                    } else if (clickedClause.type === 'coordinata') {
+                        reason = `"${clickedClause.text}" è una coordinata (inizia con una congiunzione coordinante): prima metti la principale in cima, poi affiancheremo questa!`;
+                    }
+                } else if (activeStep.id === 'coordinata') {
+                    reason = `"${clickedClause.text}" è una subordinata (scende su un livello inferiore). Ora cerchiamo la coordinata da affiancare sullo stesso piano della principale!`;
+                } else if (activeStep.id === 'sub1') {
+                    if (clickedClause.grade === 2) {
+                        reason = `Aspetta! "${clickedClause.text}" è una subordinata di 2° grado: prima dobbiamo agganciare la subordinata di 1° grado da cui dipende!`;
+                    } else {
+                        reason = `"${clickedClause.text}" non è la subordinata di 1° grado che stiamo cercando.`;
+                    }
+                }
+
+                showFeedback(false, "Riprova questo passo!", reason);
+            }
+        }
+
+        function getTreeStepHint(data) {
+            const state = appState.treeState;
+            if (!state || state.completed) return data.hintStructure;
+            const activeStep = state.steps[state.currentStepIdx];
+            const missingIdx = activeStep.clauseIndices.find(i => !state.placedIndices.includes(i));
+            if (missingIdx === undefined) return data.hintStructure;
+            const target = data.clauses[missingIdx];
+            const firstWords = target.text.split(" ").slice(0, 2).join(" ");
+            return `Per questo passo (${activeStep.label}) cerca il blocco che inizia con "${firstWords}..."!`;
+        }
+
+        /* =========================================================================
+           10. VERIFICA RIGOROSA DELLE RISPOSTE (CON FEEDBACK DIDATTICO)
+           ========================================================================= */
+        function checkCurrentStep() {
+            const data = SENTENCE_DATABASE[appState.currentIndex];
+
+            if (appState.currentMode === 'mining') {
+                checkMiningStep(data);
+            } else if (appState.currentMode === 'crafting') {
+                checkCraftingStep(data);
+            } else if (appState.currentMode === 'fortress') {
+                checkFortressStep(data);
+            } else if (appState.currentMode === 'tree') {
+                resetTreeBuilder();
+            }
+        }
+
+        function checkMiningStep(data) {
+            if (appState.userSplits.length === 0) {
+                showFeedback(false, "Manca il Blocco Separatore!", "Clicca sulle parole dove finisce ciascuna proposizione per piazzare lo stacco 🧱.");
+                playSound('wrong');
+                return;
+            }
+
+            const sortedUserSplits = [...appState.userSplits].sort((a,b) => a - b);
+            const targetSplits = [...data.targetSplits].sort((a,b) => a - b);
+
+            const isExactMatch = sortedUserSplits.length === targetSplits.length && 
+                                 sortedUserSplits.every((val, i) => val === targetSplits[i]);
+
+            if (isExactMatch) {
+                playSound('correct');
+                handleCorrectAnswer(60, "⛏️ MINATORE PRECISO", "Hai separato le proposizioni esattamente nei punti giusti!");
+                showFeedback(true, "ESTRAZIONE PERFETTA! 💎", "Hai individuato con precisione tutti i punti di cesura del periodo.");
+                generateSyntaxTree(data);
+                
+                setTimeout(() => {
+                    nextQuestionAuto();
+                }, 2600);
+            } else {
+                playSound('wrong');
+                resetStreak();
+                
+                // Analisi puntuale dell'errore per aiutare lo studente
+                const words = data.fullText.split(" ");
+                let explanation = `Questo periodo è composto da ${data.clauses.length} proposizioni distinte (richiede ${data.targetSplits.length} stacchi). `;
+                
+                const missing = targetSplits.filter(t => !sortedUserSplits.includes(t));
+                if (missing.length > 0) {
+                    const sampleWord = words[missing[0]].replace(/[.,]/g, '');
+                    explanation += `Suggerimento: prova a guardare subito dopo la parola "<strong>${sampleWord}</strong>"!`;
+                }
+                
+                showFeedback(false, "Qualche stacco non coincide!", explanation);
+            }
+        }
+
+        function checkCraftingStep(data) {
+            const choices = appState.userClassifications;
+            if (choices.includes(null) || choices.length < data.clauses.length) {
+                showFeedback(false, "Classificazione incompleta!", "Assegna un minerale a tutti i blocchi prima di verificare.");
+                playSound('wrong');
+                return;
+            }
+
+            let allCorrect = true;
+            let errorIdx = -1;
+
+            choices.forEach((choice, idx) => {
+                if (choice !== data.clauses[idx].type) {
+                    allCorrect = false;
+                    if (errorIdx === -1) errorIdx = idx;
+                }
+            });
+
+            if (allCorrect) {
+                playSound('correct');
+                const bonus = data.hasSplit ? 120 : 90;
+                handleCorrectAnswer(bonus, "🛠️ MASTRO CRAFTER", "Periodo classificato senza alcun errore!");
+                
+                const splitMsg = data.hasSplit 
+                    ? " Bravissimo: hai ricollegato il soggetto staccato al suo predicato per ricomporre la principale!" 
+                    : "";
+                showFeedback(true, "CRAFTING IMPECCABILE! 💎", `Tutte le proposizioni sono al posto giusto.${splitMsg}`);
+                generateSyntaxTree(data);
+
+                setTimeout(() => {
+                    nextQuestionAuto();
+                }, 2800);
+            } else {
+                playSound('wrong');
+                resetStreak();
+                const wrongClause = data.clauses[errorIdx];
+                showFeedback(false, "Attenzione al Blocco " + (errorIdx + 1) + "!", 
+                    `Il blocco "<em>${wrongClause.text}</em>" non è una ${choices[errorIdx]}. Ricorda: se fa parte della frase autonoma con il predicato principale, appartiene alla 💎 Principale!`);
+            }
+        }
+
+        function checkFortressStep(data) {
+            const choices = appState.userClassifications;
+            let allFilled = true;
+            let correct = true;
+            let mistakeReason = "";
+
+            choices.forEach((c, idx) => {
+                if (!c.kind || !c.form) allFilled = false;
+                if (c.kind !== data.clauses[idx].kind || c.form !== data.clauses[idx].form) {
+                    correct = false;
+                    if (!mistakeReason) {
+                        mistakeReason = `Rivedi il Blocco ${idx + 1} ("<em>${data.clauses[idx].text}</em>"): controlla se il verbo è esplicito (finito) o implicito (indefinito).`;
+                    }
+                }
+            });
+
+            if (!allFilled) {
+                showFeedback(false, "Compila tutte le caselle!", "Seleziona sia la funzione sia la forma per ogni proposizione.");
+                playSound('wrong');
+                return;
+            }
+
+            if (correct) {
+                playSound('correct');
+                handleCorrectAnswer(150, "🏰 CONQUISTA DELLA FORTEZZA", "Analisi sintattica avanzata impeccabile!");
+                showFeedback(true, "VITTORIA NELLA FORTEZZA! 👑", "Hai identificato ogni grado, forma e funzione senza errori!");
+                generateSyntaxTree(data);
+
+                setTimeout(() => {
+                    nextQuestionAuto();
+                }, 3000);
+            } else {
+                playSound('wrong');
+                resetStreak();
+                showFeedback(false, "Qualcosa non torna nella fortezza!", mistakeReason);
+            }
+        }
+
+        function nextQuestionAuto() {
+            const validIndices = getFilteredIndices();
+            const pos = validIndices.indexOf(appState.currentIndex);
+            if (pos >= 0 && pos < validIndices.length - 1) {
+                appState.currentIndex = validIndices[pos + 1];
+            } else {
+                appState.currentIndex = validIndices[0];
+            }
+            loadQuestion();
+        }
+
+        /* =========================================================================
+           12. GENERATORE DELL'ALBERO DEL PERIODO (SCHEMA GRAFICO VISIVO COMPLETO)
+           ========================================================================= */
+        function generateSyntaxTree(data) {
+            const treeContainer = document.getElementById('syntax-tree-container');
+            const canvas = document.getElementById('syntax-tree-canvas');
+            treeContainer.classList.remove('hidden');
+
+            let html = "";
+
+            const mainClauses = data.clauses.filter(c => c.type === 'principale');
+            const coordClauses = data.clauses.filter(c => c.type === 'coordinata');
+            const sub1Clauses = data.clauses.filter(c => c.type === 'subordinata' && c.grade !== 2);
+            const sub2Clauses = data.clauses.filter(c => c.type === 'subordinata' && c.grade === 2);
+
+            // Livello 0: Principale + eventuali Coordinate affiancate sullo stesso piano
+            const mainText = mainClauses.map(m => m.text).join(" ... ");
+            const splitBadge = data.hasSplit
+                ? `<div class="text-[10px] text-cyan-800 font-semibold mt-1">🔗 Soggetto separato (ricollegato)</div>`
+                : `<div class="text-[10px] text-cyan-800 font-semibold mt-1">➡️ Soggetto unito alla principale</div>`;
+
+            html += `<div class="flex flex-wrap items-center justify-center gap-3">`;
+            html += `
+                <div class="pixel-box bg-cyan-100 border-2 border-mc-diamondDark p-3 rounded-lg shadow-md text-center max-w-md">
+                    <span class="font-pixel text-[10px] text-cyan-900 bg-mc-diamond px-2 py-0.5 rounded uppercase font-bold">💎 PRINCIPALE (Livello 0)</span>
+                    <div class="text-sm font-bold text-cyan-950 mt-1">"${mainText}"</div>
+                    ${splitBadge}
+                </div>
+            `;
+
+            if (coordClauses.length > 0) {
+                html += `<div class="font-bold text-amber-800 text-sm px-1">━━ ↔️ ━━</div>`;
+                coordClauses.forEach(coord => {
+                    html += `
+                        <div class="pixel-box bg-yellow-100 border-2 border-mc-goldDark p-2.5 rounded-lg shadow text-center max-w-xs">
+                            <span class="font-pixel text-[9px] text-amber-900 bg-mc-gold px-1.5 py-0.5 rounded uppercase font-bold">🪙 COORDINATA (Livello 0)</span>
+                            <div class="text-xs font-bold text-amber-950 mt-1">"${coord.text}"</div>
+                            <div class="text-[10px] text-amber-800 italic mt-0.5">Stesso piano della principale</div>
+                        </div>
+                    `;
+                });
+            }
+            html += `</div>`;
+
+            // Livello 1: Subordinate di 1° grado
+            if (sub1Clauses.length > 0) {
+                html += `
+                    <div class="flex items-center gap-2 my-1 text-xs font-bold text-emerald-800">
+                        <span>⬇️ subordinazione (1° grado)</span>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3">
+                `;
+                sub1Clauses.forEach(sub => {
+                    html += `
+                        <div class="pixel-box bg-emerald-100 border-2 border-mc-emeraldDark p-2.5 rounded-lg shadow text-center max-w-xs">
+                            <span class="font-pixel text-[9px] bg-mc-emerald px-1.5 py-0.5 rounded uppercase font-bold text-white">🟢 SUBORDINATA 1° GRADO</span>
+                            <div class="text-xs font-bold text-emerald-950 mt-1">"${sub.text}"</div>
+                            <div class="text-[10px] text-emerald-700 italic mt-0.5">${sub.typeName || ''} • Forma ${sub.form}</div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+
+            // Livello 2: Subordinate di 2° grado
+            if (sub2Clauses.length > 0) {
+                html += `
+                    <div class="flex items-center gap-2 my-1 text-xs font-bold text-purple-800">
+                        <span>⬇️ subordinazione (2° grado)</span>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3">
+                `;
+                sub2Clauses.forEach(sub => {
+                    html += `
+                        <div class="pixel-box bg-purple-100 border-2 border-purple-700 p-2.5 rounded-lg shadow text-center max-w-xs">
+                            <span class="font-pixel text-[9px] bg-purple-700 px-1.5 py-0.5 rounded uppercase font-bold text-white">🟣 SUBORDINATA 2° GRADO</span>
+                            <div class="text-xs font-bold text-purple-950 mt-1">"${sub.text}"</div>
+                            <div class="text-[10px] text-purple-800 italic mt-0.5">${sub.typeName || ''} • Forma ${sub.form}</div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+
+            // Pulsante per esercitarsi nella costruzione guidata di questo stesso albero
+            html += `
+                <div class="pt-3 border-t border-stone-300 w-full text-center">
+                    <button onclick="openGuidedTreeForCurrent()" class="pixel-btn bg-purple-700 text-white font-pixel text-[10px] px-4 py-2 rounded hover:brightness-110">
+                        🛠️ COSTRUISCI TU QUESTO ALBERO PASSO-PASSO
+                    </button>
+                </div>
+            `;
+
+            canvas.innerHTML = html;
+        }
+
+        function toggleSyntaxTree() {
+            const data = SENTENCE_DATABASE[appState.currentIndex];
+            const treeContainer = document.getElementById('syntax-tree-container');
+            if (treeContainer.classList.contains('hidden')) {
+                generateSyntaxTree(data);
+            } else {
+                treeContainer.classList.add('hidden');
+            }
+        }
+
+        /* =========================================================================
+           13. GAMIFICATION: XP, STREAK & LIVELLO
+           ========================================================================= */
+        function handleCorrectAnswer(baseXP, achTitle, achDesc) {
+            appState.streak++;
+            const multiplier = appState.streak >= 3 ? 1.5 : 1.0;
+            const finalXP = Math.round(baseXP * multiplier);
+
+            addXP(finalXP);
+            updateStreakUI();
+
+            if (appState.streak === 3) {
+                triggerAchievement("🔥 IN FIAMME (STREAK 3x)!", "3 risposte corrette consecutive!");
+            } else if (appState.streak === 5) {
+                triggerAchievement("⚡ IMPERATORE DELLA SINTASSI!", "5 risposte corrette di fila: moltiplicatore XP attivo!");
+            } else if (achTitle) {
+                triggerAchievement(achTitle, achDesc);
+            }
+        }
+
+        function resetStreak() {
+            appState.streak = 0;
+            updateStreakUI();
+        }
+
+        function updateStreakUI() {
+            const fire = document.getElementById('streak-fire');
+            const counter = document.getElementById('streak-counter');
+            if (appState.streak >= 2) {
+                fire.classList.remove('hidden');
+                counter.innerText = `Streak: ${appState.streak}x`;
+            } else {
+                fire.classList.add('hidden');
+                counter.innerText = '';
+            }
+        }
+
+        function addXP(amount) {
+            appState.xp += amount;
+            const threshold = appState.level * 200;
+
+            if (appState.xp >= threshold) {
+                appState.level++;
+                playSound('levelUp');
+                triggerAchievement("🎉 LIVELLO AUMENTATO!", `Congratulazioni! Hai raggiunto il Livello ${appState.level}!`);
+                updateEquippedTool();
+            }
+            updateXPUI();
+            saveState();
+        }
+
+        function updateXPUI() {
+            document.getElementById('level-num').innerText = appState.level;
+            document.getElementById('xp-text').innerText = `${appState.xp} XP`;
+            const maxXP = appState.level * 200;
+            const pct = Math.min(100, Math.floor((appState.xp / maxXP) * 100));
+            document.getElementById('xp-bar').style.width = `${pct}%`;
+            updateEquippedTool();
+        }
+
+        function updateEquippedTool() {
+            const currentTier = TOOLS_TIERS.slice().reverse().find(t => appState.level >= t.level) || TOOLS_TIERS[0];
+            document.getElementById('equipped-tool-icon').innerText = currentTier.icon;
+        }
+
+        function triggerAchievement(title, desc) {
+            const popup = document.getElementById('achievement-popup');
+            document.getElementById('ach-title').innerText = title;
+            document.getElementById('ach-desc').innerText = desc;
+
+            popup.classList.remove('translate-y-36');
+            setTimeout(() => {
+                popup.classList.add('translate-y-36');
+            }, 4200);
+        }
+
+        /* =========================================================================
+           14. FEEDBACK VISIVI E SUGGERIMENTI
+           ========================================================================= */
+        function provideHint() {
+            playSound('click');
+            const data = SENTENCE_DATABASE[appState.currentIndex];
+            let hintText = data ? (data.hintStructure || data.hintVerb) : "Trova prima la proposizione principale che non ha legami di subordinazione.";
+            if (appState.currentMode === 'tree' && data) {
+                hintText = getTreeStepHint(data);
+            }
+            
+            document.getElementById('villager-hint-text').innerText = hintText;
+            speakText("Suggerimento del Villager: " + hintText);
+
+            const box = document.getElementById('villager-hint-box');
+            box.classList.add('glow-active');
+            setTimeout(() => box.classList.remove('glow-active'), 2000);
+        }
+
+        function showFeedback(isSuccess, title, text) {
+            const box = document.getElementById('feedback-box');
+            const icon = document.getElementById('feedback-icon');
+            const titleEl = document.getElementById('feedback-title');
+            const textEl = document.getElementById('feedback-text');
+
+            box.classList.remove('hidden', 'bg-green-100', 'border-green-600', 'text-green-950', 'bg-red-100', 'border-red-600', 'text-red-950');
+
+            if (isSuccess) {
+                box.classList.add('bg-green-100', 'border-green-600', 'text-green-950');
+                icon.innerText = "🎉";
+            } else {
+                box.classList.add('bg-red-100', 'border-red-600', 'text-red-950');
+                icon.innerText = "⚠️";
+            }
+
+            titleEl.innerText = title;
+            textEl.innerHTML = text;
+            if (appState.ttsEnabled) speakText(`${title}. ${text.replace(/<[^>]*>/g, '')}`);
+        }
+
+        function hideFeedback() {
+            document.getElementById('feedback-box').classList.add('hidden');
+        }
+
+        /* =========================================================================
+           15. GESTIONE ZAINO & MODALI
+           ========================================================================= */
+        function openInventoryModal() {
+            playSound('click');
+            const grid = document.getElementById('inventory-grid');
+            grid.innerHTML = "";
+
+            TOOLS_TIERS.forEach(t => {
+                const isUnlocked = appState.level >= t.level;
+                grid.innerHTML += `
+                    <div onclick="selectToolDetail(${t.level})" class="p-3 bg-stone-800 border-2 ${isUnlocked ? 'border-yellow-400 cursor-pointer hover:bg-stone-700' : 'border-stone-600 opacity-40'} rounded flex flex-col items-center">
+                        <span class="text-3xl">${isUnlocked ? t.icon : '🔒'}</span>
+                        <span class="text-[9px] font-pixel text-stone-300 mt-1">LIV ${t.level}</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('inventory-modal').classList.remove('hidden');
+        }
+
+        function selectToolDetail(tierLevel) {
+            const tool = TOOLS_TIERS.find(t => t.level === tierLevel);
+            if (!tool) return;
+            const isUnlocked = appState.level >= tool.level;
+            document.getElementById('tool-details-name').innerText = tool.name + (isUnlocked ? " (Sbloccato ✔️)" : " (Bloccato 🔒)");
+            document.getElementById('tool-details-desc').innerText = tool.desc;
+        }
+
+        function closeInventoryModal() {
+            playSound('click');
+            document.getElementById('inventory-modal').classList.add('hidden');
+        }
+
+        function openGuideModal() {
+            playSound('click');
+            document.getElementById('guide-modal').classList.remove('hidden');
+        }
+
+        function closeGuideModal() {
+            playSound('click');
+            document.getElementById('guide-modal').classList.add('hidden');
+        }
+
+        function openAccessibilityModal() {
+            playSound('click');
+            loadItalianVoices();
+            const rateSlider = document.getElementById('slider-tts-rate');
+            if (rateSlider) rateSlider.value = appState.ttsRate;
+            document.getElementById('accessibility-modal').classList.remove('hidden');
+        }
+
+        function closeAccessibilityModal() {
+            playSound('click');
+            document.getElementById('accessibility-modal').classList.add('hidden');
+            saveState();
+        }
+
+        function changeFontFamily(type) {
+            playSound('click');
+            appState.fontFamily = type;
+            document.body.classList.remove('font-dyslexic-mode', 'font-accessible-mode', 'font-pixel-mode');
+            if (type === 'dyslexic') document.body.classList.add('font-dyslexic-mode');
+            if (type === 'accessible') document.body.classList.add('font-accessible-mode');
+            if (type === 'pixel') document.body.classList.add('font-pixel-mode');
+            saveState();
+        }
+
+        function updateFontSize(val) {
+            appState.fontSize = val + 'px';
+            document.documentElement.style.setProperty('--base-font-size', appState.fontSize);
+            document.getElementById('font-size-val').innerText = appState.fontSize;
+            saveState();
+        }
+
+        function setSpacing(level) {
+            playSound('click');
+            appState.spacing = level;
+            if (level === 'normal') {
+                document.documentElement.style.setProperty('--base-line-height', '1.5');
+                document.documentElement.style.setProperty('--base-letter-spacing', '0em');
+                document.documentElement.style.setProperty('--word-spacing', '0em');
+                document.getElementById('line-height-val').innerText = "Normale";
+            } else if (level === 'wide') {
+                document.documentElement.style.setProperty('--base-line-height', '1.8');
+                document.documentElement.style.setProperty('--base-letter-spacing', '0.04em');
+                document.documentElement.style.setProperty('--word-spacing', '0.1em');
+                document.getElementById('line-height-val').innerText = "Ampia";
+            } else if (level === 'extra') {
+                document.documentElement.style.setProperty('--base-line-height', '2.2');
+                document.documentElement.style.setProperty('--base-letter-spacing', '0.08em');
+                document.documentElement.style.setProperty('--word-spacing', '0.18em');
+                document.getElementById('line-height-val').innerText = "Molto Spaziata";
+            }
+            saveState();
+        }
+
+        function updateTTSRate(val) {
+            appState.ttsRate = parseFloat(val);
+            saveState();
+        }
+
+        function setTheme(theme, skipSound = false) {
+            if (!skipSound) playSound('click');
+            appState.highContrast = (theme === 'high-contrast');
+            if (appState.highContrast) {
+                document.body.classList.add('theme-high-contrast');
+            } else {
+                document.body.classList.remove('theme-high-contrast');
+            }
+            saveState();
+        }
+
+        /* =========================================================================
+           16. ACCESSIBILITÀ DA TASTIERA (HOTKEYS)
+           ========================================================================= */
+        window.addEventListener('keydown', (e) => {
+            // Non intercettare se l'utente sta interagendo con un controllo di input
+            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+            if (e.code === 'Space') {
+                e.preventDefault();
+                readCurrentSentence();
+            } else if (e.key === 'h' || e.key === 'H') {
+                provideHint();
+            } else if (e.key === 'Enter') {
+                checkCurrentStep();
+            }
+        });
+
+        /* =========================================================================
+           17. INIZIALIZZAZIONE ALL'AVVIO
+           ========================================================================= */
+        window.onload = function() {
+            loadSavedState();
+            loadItalianVoices();
+            changeFontFamily(appState.fontFamily);
+            setSpacing(appState.spacing);
+            if (appState.highContrast) setTheme('high-contrast', true);
+            const rateSlider = document.getElementById('slider-tts-rate');
+            if (rateSlider) rateSlider.value = appState.ttsRate;
+            updateXPUI();
+        };
+    </script>
+</body>
+</html>
