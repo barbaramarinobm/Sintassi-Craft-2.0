@@ -355,6 +355,27 @@
             color: #ffffff !important;
         }
 
+        /* Schede di Verifica e Feedback Blocchi */
+        .craft-card-correct {
+            border: 3px solid #10b981 !important;
+            background-color: #f0fdf4 !important;
+        }
+        .craft-card-error {
+            border: 3px solid #ef4444 !important;
+            background-color: #fef2f2 !important;
+        }
+        .theme-high-contrast .craft-card-correct {
+            border: 3px solid #00ff66 !important;
+            background-color: #002200 !important;
+        }
+        .theme-high-contrast .craft-card-error {
+            border: 3px solid #ff4444 !important;
+            background-color: #2b0000 !important;
+        }
+        .theme-high-contrast .craft-status-badge {
+            color: #ffffff !important;
+        }
+
         /* Animazioni di Feedback */
         @keyframes bounceGlow {
             0%, 100% { transform: translateY(0); }
@@ -650,9 +671,14 @@
                             🌳 ALBERO SINTATTICO
                         </button>
                     </div>
-                    <button id="btn-check-action" onclick="checkCurrentStep()" class="pixel-btn bg-mc-emerald text-white font-pixel text-xs px-6 py-3 rounded hover:brightness-110">
-                        VERIFICA CRAFTING ✔️
-                    </button>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="btn-next-action" onclick="nextQuestionAuto()" class="hidden pixel-btn bg-mc-gold text-black font-pixel text-xs px-5 py-3 rounded hover:brightness-110 shadow-md flex items-center gap-1.5" title="Passa alla prossima frase quando hai finito di controllare">
+                            ➡️ PROSSIMA FRASE
+                        </button>
+                        <button id="btn-check-action" onclick="checkCurrentStep()" class="pixel-btn bg-mc-emerald text-white font-pixel text-xs px-6 py-3 rounded hover:brightness-110">
+                            VERIFICA CRAFTING ✔️
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -1910,14 +1936,25 @@
             // Adatta i pulsanti in fondo in base alla modalità
             const btnCheck = document.getElementById('btn-check-action');
             const btnToggleTree = document.getElementById('btn-toggle-tree');
-            if (appState.currentMode === 'tree') {
+            const btnNext = document.getElementById('btn-next-action');
+            if (btnNext) btnNext.classList.add('hidden');
+
+            if (appState.currentMode === 'mining') {
+                btnCheck.innerText = "VERIFICA STACCHI ✔️";
+                btnCheck.className = "pixel-btn bg-mc-grass text-white font-pixel text-xs px-6 py-3 rounded hover:brightness-110";
+                btnToggleTree.classList.remove('hidden');
+            } else if (appState.currentMode === 'crafting') {
+                btnCheck.innerText = "VERIFICA CRAFTING ✔️";
+                btnCheck.className = "pixel-btn bg-mc-gold text-black font-pixel text-xs px-6 py-3 rounded hover:brightness-110";
+                btnToggleTree.classList.remove('hidden');
+            } else if (appState.currentMode === 'fortress') {
+                btnCheck.innerText = "VERIFICA FORTEZZA ✔️";
+                btnCheck.className = "pixel-btn bg-mc-diamond text-black font-pixel text-xs px-6 py-3 rounded hover:brightness-110";
+                btnToggleTree.classList.remove('hidden');
+            } else if (appState.currentMode === 'tree') {
                 btnCheck.innerText = "🔄 RICOMINCIA ALBERO";
                 btnCheck.className = "pixel-btn bg-stone-700 text-white font-pixel text-xs px-5 py-3 rounded hover:brightness-110";
                 btnToggleTree.classList.add('hidden');
-            } else {
-                btnCheck.innerText = "VERIFICA CRAFTING ✔️";
-                btnCheck.className = "pixel-btn bg-mc-emerald text-white font-pixel text-xs px-6 py-3 rounded hover:brightness-110";
-                btnToggleTree.classList.remove('hidden');
             }
 
             document.getElementById('villager-hint-text').innerText = "Riconosci le diverse parti del periodo. Clicca sui blocchi per risolvere la sfida!";
@@ -2035,14 +2072,17 @@
                     : '';
 
                 html += `
-                    <div class="pixel-box bg-white p-4 rounded-lg space-y-3 ${isSplitPart ? 'border-l-8 border-mc-diamond bg-cyan-50/50' : ''}">
+                    <div id="craft-card-${idx}" class="craft-card-item pixel-box bg-white p-4 rounded-lg space-y-3 transition-all ${isSplitPart ? 'border-l-8 border-mc-diamond bg-cyan-50/50' : ''}">
                         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200 pb-2">
                             <div class="flex items-center gap-2">
                                 <span class="font-pixel text-[11px] bg-stone-800 text-yellow-300 px-2 py-1 rounded">Blocco ${idx + 1}</span>
                                 <span class="text-base font-semibold text-stone-900">"${clause.text}"</span>
                                 <button onclick="speakText('${clause.text.replace(/'/g, "\\'")}')" class="text-xs bg-stone-200 p-1 rounded hover:bg-stone-300 font-bold" title="Ascolta">🔊</button>
                             </div>
-                            ${splitBadge}
+                            <div class="flex items-center gap-2">
+                                ${splitBadge}
+                                <span id="craft-status-${idx}" class="craft-status-badge hidden text-xs font-bold px-2 py-0.5 rounded-full"></span>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
@@ -2061,6 +2101,9 @@
                                 <div class="text-[11px] text-stone-500">Dipende da un'altra frase</div>
                             </button>
                         </div>
+
+                        <!-- Spiegazione didattica specifica per questo blocco -->
+                        <div id="craft-expl-${idx}" class="hidden text-xs p-2.5 rounded border transition-all"></div>
                     </div>
                 `;
             });
@@ -2093,6 +2136,14 @@
             if (type === 'principale') btnElement.classList.add('bg-mc-diamond');
             if (type === 'coordinata') btnElement.classList.add('bg-mc-gold');
             if (type === 'subordinata') btnElement.classList.add('bg-mc-emerald');
+
+            // Reset dello stato di errore/correttezza su questa specifica card se lo studente cambia scelta
+            const card = document.getElementById(`craft-card-${clauseIdx}`);
+            const statusBadge = document.getElementById(`craft-status-${clauseIdx}`);
+            const expl = document.getElementById(`craft-expl-${clauseIdx}`);
+            if (card) card.classList.remove('craft-card-error', 'craft-card-correct');
+            if (statusBadge) { statusBadge.classList.add('hidden'); statusBadge.innerHTML = ''; }
+            if (expl) { expl.classList.add('hidden'); expl.innerHTML = ''; }
         }
 
         /* =========================================================================
@@ -2117,13 +2168,16 @@
             data.clauses.forEach((clause, idx) => {
                 const isSplit = clause.totalParts && clause.totalParts > 1;
                 html += `
-                    <div class="pixel-box bg-white p-4 rounded-lg space-y-3 ${isSplit ? 'border-l-8 border-mc-diamond bg-cyan-50/50' : ''}">
+                    <div id="fortress-card-${idx}" class="pixel-box bg-white p-4 rounded-lg space-y-3 transition-all ${isSplit ? 'border-l-8 border-mc-diamond bg-cyan-50/50' : ''}">
                         <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
                             <div class="flex items-center gap-2">
                                 <span class="font-pixel text-[11px] bg-mc-woodDark text-yellow-300 px-2 py-1 rounded">Blocco ${idx + 1}</span>
                                 <span class="text-base font-bold text-stone-900">"${clause.text}"</span>
                             </div>
-                            ${isSplit ? `<span class="text-xs font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded border border-amber-500">🔗 Parte ${clause.part} di ${clause.totalParts} (Spezzata)</span>` : ''}
+                            <div class="flex items-center gap-2">
+                                ${isSplit ? `<span class="text-xs font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded border border-amber-500">🔗 Parte ${clause.part} di ${clause.totalParts} (Spezzata)</span>` : ''}
+                                <span id="fortress-status-${idx}" class="hidden text-xs font-bold px-2 py-0.5 rounded-full"></span>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
@@ -2163,6 +2217,10 @@
             if (appState.userClassifications[clauseIdx]) {
                 appState.userClassifications[clauseIdx][field] = value;
             }
+            const card = document.getElementById(`fortress-card-${clauseIdx}`);
+            const status = document.getElementById(`fortress-status-${clauseIdx}`);
+            if (card) card.classList.remove('craft-card-error', 'craft-card-correct');
+            if (status) { status.classList.add('hidden'); status.innerHTML = ''; }
         }
 
         /* =========================================================================
@@ -2562,15 +2620,21 @@
             const isExactMatch = sortedUserSplits.length === targetSplits.length && 
                                  sortedUserSplits.every((val, i) => val === targetSplits[i]);
 
+            const btnNext = document.getElementById('btn-next-action');
+            if (btnNext) btnNext.classList.remove('hidden');
+
             if (isExactMatch) {
                 playSound('correct');
                 handleCorrectAnswer(60, "⛏️ MINATORE PRECISO", "Hai separato le proposizioni esattamente nei punti giusti!");
-                showFeedback(true, "ESTRAZIONE PERFETTA! 💎", "Hai individuato con precisione tutti i punti di cesura del periodo.");
+                showFeedback(true, "ESTRAZIONE PERFETTA! 💎", 
+                    "Hai individuato con precisione tutti i punti di cesura del periodo.<br><br>" +
+                    `<div class="flex flex-wrap items-center gap-3 mt-2">` +
+                    `<span>Puoi osservare la struttura oppure passare alla nuova frase quando vuoi:</span>` +
+                    `<button onclick="nextQuestionAuto()" class="pixel-btn bg-mc-gold text-black font-pixel text-xs px-4 py-2 rounded hover:brightness-110 shadow">➡️ PROSSIMA FRASE</button>` +
+                    `</div>`
+                );
                 generateSyntaxTree(data);
-                
-                setTimeout(() => {
-                    nextQuestionAuto();
-                }, 2600);
+                // Nessun timer automatico: lo studente decide quando proseguire
             } else {
                 playSound('wrong');
                 resetStreak();
@@ -2584,6 +2648,7 @@
                     const sampleWord = words[missing[0]].replace(/[.,]/g, '');
                     explanation += `Suggerimento: prova a guardare subito dopo la parola "<strong>${sampleWord}</strong>"!`;
                 }
+                explanation += `<br><br>Puoi riposizionare gli stacchi e cliccare di nuovo su <strong>"VERIFICA STACCHI ✔️"</strong>, oppure passare alla nuova frase con <strong>"➡️ PROSSIMA FRASE"</strong> quando preferisci.`;
                 
                 showFeedback(false, "Qualche stacco non coincide!", explanation);
             }
@@ -2598,14 +2663,67 @@
             }
 
             let allCorrect = true;
-            let errorIdx = -1;
+            let errorCount = 0;
 
-            choices.forEach((choice, idx) => {
-                if (choice !== data.clauses[idx].type) {
+            data.clauses.forEach((clause, idx) => {
+                const userChoice = choices[idx];
+                const expectedType = clause.type;
+                const card = document.getElementById(`craft-card-${idx}`);
+                const statusBadge = document.getElementById(`craft-status-${idx}`);
+                const expl = document.getElementById(`craft-expl-${idx}`);
+
+                if (userChoice === expectedType) {
+                    if (card) {
+                        card.classList.remove('craft-card-error');
+                        card.classList.add('craft-card-correct');
+                    }
+                    if (statusBadge) {
+                        statusBadge.className = "craft-status-badge text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-500 flex items-center gap-1";
+                        statusBadge.innerHTML = "✔️ Corretto!";
+                        statusBadge.classList.remove('hidden');
+                    }
+                    if (expl) {
+                        expl.className = "text-xs p-2 rounded bg-emerald-50 border border-emerald-300 text-emerald-900";
+                        expl.innerHTML = `<strong>Esatto:</strong> è una <em>${clause.typeName}</em>.`;
+                        expl.classList.remove('hidden');
+                    }
+                } else {
                     allCorrect = false;
-                    if (errorIdx === -1) errorIdx = idx;
+                    errorCount++;
+                    if (card) {
+                        card.classList.remove('craft-card-correct');
+                        card.classList.add('craft-card-error');
+                    }
+                    if (statusBadge) {
+                        statusBadge.className = "craft-status-badge text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-500 flex items-center gap-1";
+                        statusBadge.innerHTML = "❌ Da correggere";
+                        statusBadge.classList.remove('hidden');
+                    }
+                    
+                    let specificReason = "";
+                    if (expectedType === 'principale') {
+                        if (clause.totalParts && clause.totalParts > 1) {
+                            specificReason = `Hai scelto <strong>${userChoice}</strong>, ma fa parte della <strong>💎 Principale spezzata dall'inciso</strong>! Ricomponila con l'altro pezzo per ritrovare la frase reggente completa.`;
+                        } else {
+                            specificReason = `Hai scelto <strong>${userChoice}</strong>, ma è la <strong>💎 Principale</strong>: ha senso compiuto e regge l'intero periodo.`;
+                        }
+                    } else if (expectedType === 'coordinata') {
+                        specificReason = `Hai scelto <strong>${userChoice}</strong>, ma è una <strong>🪙 Coordinata</strong>: è unita con una congiunzione coordinante (e, ma, però...) sullo stesso piano logico.`;
+                    } else if (expectedType === 'subordinata') {
+                        specificReason = `Hai scelto <strong>${userChoice}</strong>, ma è una <strong>🟢 Subordinata</strong> (${clause.typeName}): non è autonoma e dipende da un'altra proposizione.`;
+                    }
+
+                    if (expl) {
+                        expl.className = "text-xs p-2 rounded bg-red-50 border border-red-300 text-red-900 leading-relaxed";
+                        expl.innerHTML = specificReason;
+                        expl.classList.remove('hidden');
+                    }
                 }
             });
+
+            // Mostra sempre il pulsante per passare alla prossima frase, lasciando totale controllo allo studente
+            const btnNext = document.getElementById('btn-next-action');
+            if (btnNext) btnNext.classList.remove('hidden');
 
             if (allCorrect) {
                 playSound('correct');
@@ -2615,18 +2733,21 @@
                 const splitMsg = data.hasSplit 
                     ? " Bravissimo: hai ricollegato il soggetto staccato al suo predicato per ricomporre la principale!" 
                     : "";
-                showFeedback(true, "CRAFTING IMPECCABILE! 💎", `Tutte le proposizioni sono al posto giusto.${splitMsg}`);
+                showFeedback(true, "CRAFTING IMPECCABILE! 💎", 
+                    `Tutte le proposizioni sono al posto giusto.${splitMsg}<br><br>` +
+                    `<div class="flex flex-wrap items-center gap-3 mt-2">` +
+                    `<span>Puoi osservare l'albero sintattico qui sotto o passare alla nuova frase quando vuoi:</span>` +
+                    `<button onclick="nextQuestionAuto()" class="pixel-btn bg-mc-gold text-black font-pixel text-xs px-4 py-2 rounded hover:brightness-110 shadow">➡️ PROSSIMA FRASE</button>` +
+                    `</div>`
+                );
                 generateSyntaxTree(data);
-
-                setTimeout(() => {
-                    nextQuestionAuto();
-                }, 2800);
+                // NESSUN timer: lo studente decide quando proseguire!
             } else {
                 playSound('wrong');
                 resetStreak();
-                const wrongClause = data.clauses[errorIdx];
-                showFeedback(false, "Attenzione al Blocco " + (errorIdx + 1) + "!", 
-                    `Il blocco "<em>${wrongClause.text}</em>" non è una ${choices[errorIdx]}. Ricorda: se fa parte della frase autonoma con il predicato principale, appartiene alla 💎 Principale!`);
+                showFeedback(false, `Attenzione: ${errorCount} ${errorCount === 1 ? 'blocco da correggere' : 'blocchi da correggere'}!`, 
+                    `Controlla le schede evidenziate in rosso per vedere i dettagli dell'errore.<br><br>` +
+                    `Puoi <strong>correggere le tue scelte e cliccare di nuovo su "VERIFICA CRAFTING ✔️"</strong>, oppure passare alla nuova frase con il pulsante <strong>"➡️ PROSSIMA FRASE"</strong> quando preferisci.`);
             }
         }
 
@@ -2635,13 +2756,37 @@
             let allFilled = true;
             let correct = true;
             let mistakeReason = "";
+            let errorCount = 0;
 
             choices.forEach((c, idx) => {
+                const card = document.getElementById(`fortress-card-${idx}`);
+                const status = document.getElementById(`fortress-status-${idx}`);
                 if (!c.kind || !c.form) allFilled = false;
-                if (c.kind !== data.clauses[idx].kind || c.form !== data.clauses[idx].form) {
+                const isBlockCorrect = (c.kind === data.clauses[idx].kind && c.form === data.clauses[idx].form);
+                if (!isBlockCorrect) {
                     correct = false;
+                    errorCount++;
+                    if (card) {
+                        card.classList.remove('craft-card-correct');
+                        card.classList.add('craft-card-error');
+                    }
+                    if (status) {
+                        status.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-500";
+                        status.innerText = "❌ Da rivedere";
+                        status.classList.remove('hidden');
+                    }
                     if (!mistakeReason) {
                         mistakeReason = `Rivedi il Blocco ${idx + 1} ("<em>${data.clauses[idx].text}</em>"): controlla se il verbo è esplicito (finito) o implicito (indefinito).`;
+                    }
+                } else {
+                    if (card) {
+                        card.classList.remove('craft-card-error');
+                        card.classList.add('craft-card-correct');
+                    }
+                    if (status) {
+                        status.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-500";
+                        status.innerText = "✔️ Corretto";
+                        status.classList.remove('hidden');
                     }
                 }
             });
@@ -2652,19 +2797,26 @@
                 return;
             }
 
+            const btnNext = document.getElementById('btn-next-action');
+            if (btnNext) btnNext.classList.remove('hidden');
+
             if (correct) {
                 playSound('correct');
                 handleCorrectAnswer(150, "🏰 CONQUISTA DELLA FORTEZZA", "Analisi sintattica avanzata impeccabile!");
-                showFeedback(true, "VITTORIA NELLA FORTEZZA! 👑", "Hai identificato ogni grado, forma e funzione senza errori!");
+                showFeedback(true, "VITTORIA NELLA FORTEZZA! 👑", 
+                    "Hai identificato ogni grado, forma e funzione senza errori!<br><br>" +
+                    `<div class="flex flex-wrap items-center gap-3 mt-2">` +
+                    `<span>Ottimo lavoro! Quando sei pronto per la prossima sfida:</span>` +
+                    `<button onclick="nextQuestionAuto()" class="pixel-btn bg-mc-gold text-black font-pixel text-xs px-4 py-2 rounded hover:brightness-110 shadow">➡️ PROSSIMA FRASE</button>` +
+                    `</div>`
+                );
                 generateSyntaxTree(data);
-
-                setTimeout(() => {
-                    nextQuestionAuto();
-                }, 3000);
+                // NESSUN timer: lo studente decide quando proseguire!
             } else {
                 playSound('wrong');
                 resetStreak();
-                showFeedback(false, "Qualcosa non torna nella fortezza!", mistakeReason);
+                showFeedback(false, "Qualcosa non torna nella fortezza!", 
+                    mistakeReason + `<br><br>Puoi <strong>correggere le opzioni e cliccare di nuovo su "VERIFICA FORTEZZA ✔️"</strong>, oppure passare alla nuova frase con <strong>"➡️ PROSSIMA FRASE"</strong> quando preferisci.`);
             }
         }
 
